@@ -76,7 +76,7 @@
                 {counter start=0 name="colCounter" print=false assign="colCounter"}
                 {foreach from=$rowData key=col item=params}
                     {strip}
-                    <td scope='row' align='left' valign="top">
+                    <td align='left' valign="top">
                         {$params}
                     </td>
                     {/strip}

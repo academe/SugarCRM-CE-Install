@@ -68,10 +68,11 @@ class ExternalSourceEAPMAdapter extends ImportDataSource
                                        'importlocale_default_locale_name_format' => '');
 
 
-    public function __construct()
+    public function __construct($eapmName)
     {
         global $current_user, $locale;
-
+        $this->_eapmName = $eapmName;
+      
         $this->_localeSettings['importlocale_num_grp_sep'] = $current_user->getPreference('num_grp_sep');
         $this->_localeSettings['importlocale_dec_sep'] = $current_user->getPreference('dec_sep');
         $this->_localeSettings['importlocale_default_currency_significant_digits'] = $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
@@ -92,7 +93,7 @@ class ExternalSourceEAPMAdapter extends ImportDataSource
     {
          if ( !$eapmBean = EAPM::getLoginInfo($this->_eapmName,true) )
          {
-            throw new Exception('Authentication error with Google Contacts EAPM.');
+            throw new Exception("Authentication error with {$this->_eapmName}");
          }
 
         $api = ExternalAPIFactory::loadAPI($this->_eapmName);

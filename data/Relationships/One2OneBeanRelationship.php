@@ -38,6 +38,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once("data/Relationships/One2MBeanRelationship.php");
 
+/**
+ * 1-1 Bean relationship
+ * @api
+ */
 class One2OneBeanRelationship extends One2MBeanRelationship
 {
 

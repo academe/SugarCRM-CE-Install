@@ -38,6 +38,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('data/SugarBean.php');
 
+/**
+ * Factory to create SugarBeans
+ * @api
+ */
 class BeanFactory {
     protected static $loadedBeans = array();
     protected static $maxLoaded = 10;
@@ -84,7 +88,7 @@ class BeanFactory {
         } else {
             $bean = new $beanClass();
         }
-        
+
         return $bean;
     }
 
@@ -104,7 +108,7 @@ class BeanFactory {
     /**
      * Returns the object name / dictionary key for a given module. This should normally
      * be the same as the bean name, but may not for special case modules (ex. Case vs aCase)
-     * @static 
+     * @static
      * @param String $module
      * @return bool
      */
@@ -177,7 +181,7 @@ class BeanFactory {
 
         if(!empty($bean->id))
            $id = $bean->id;
-        
+
         if ($id)
         {
             self::$loadedBeans[$module][$id] = $bean;

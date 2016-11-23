@@ -88,7 +88,7 @@ class ImportListView
     function __construct($dataSource, $params, $tableIdentifier = '')
     {
         global $sugar_config;
-        
+
         $this->ss = new Sugar_Smarty();
         $this->tableID = $tableIdentifier;
 
@@ -166,7 +166,7 @@ class ImportListView
         $offsets = array('totalCounted'=> true, 'total' => $totalRecordsCount, 'next' => $nextOffset,
                          'last' => $lastOffset, 'previous' => $previousOffset,
                          'current' => $currentOffset, 'lastOffsetOnPage' => count($this->data) + $this->dataSource->getCurrentOffset() );
-        
+
         $pageData = array('offsets' => $offsets);
         return $pageData;
 

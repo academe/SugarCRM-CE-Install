@@ -50,6 +50,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $dictionary;
 require_once("data/Relationships/RelationshipFactory.php");
 
+/**
+ * Represents a relationship from a single beans perspective.
+ * @api
+ */
 class Link2 {
 
     protected $relationship; //relationship object this link is tied to.
@@ -323,7 +327,7 @@ class Link2 {
 
     /**
      * @param array $params optional parameters. Possible Values;
-     * 'return_as_array': returns the query broken into 
+     * 'return_as_array': returns the query broken into
      * @return String/Array query to grab just ids for this relationship
      */
     function getQuery($params = array())
@@ -636,4 +640,3 @@ class Link2 {
         return $this->getSide() == REL_LHS;
     }
 }
-?>

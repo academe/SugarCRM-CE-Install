@@ -40,6 +40,7 @@ require_once("data/Relationships/One2MRelationship.php");
 
 /**
  * Represents a one to many relationship that is table based.
+ * @api
  */
 class One2MBeanRelationship extends One2MRelationship
 {
@@ -59,6 +60,11 @@ class One2MBeanRelationship extends One2MRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
+        // test to see if the relationship exist if the relationship between the two beans
+        // exist then we just fail out with false as we don't want to re-trigger this
+        // the save and such as it causes problems with the related() in sugarlogic
+        if($this->relationship_exists($lhs, $rhs)) return false;
+
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
 
@@ -136,7 +142,7 @@ class One2MBeanRelationship extends One2MRelationship
             $rhs->in_relationship_update = TRUE;
             $rhs->save();
         }
-        
+
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
         {
             $this->callAfterDelete($lhs, $rhs);
@@ -207,7 +213,7 @@ class One2MBeanRelationship extends One2MRelationship
             else
             {
                 return array(
-                    'select' => "SELECT id",
+                    'select' => "SELECT {$this->def['rhs_table']}.id",
                     'from' => "FROM {$this->def['rhs_table']}",
                     'where' => $where,
                 );
@@ -238,7 +244,7 @@ class One2MBeanRelationship extends One2MRelationship
         //First join the relationship table
         $join .= "$join_type $targetTableWithAlias ON $startingTable.$startingKey=$targetTable.$targetKey AND $targetTable.deleted=0\n"
         //Next add any role filters
-               . $this->getRoleWhere(($linkIsLHS) ? $targetTable : $startingTable) . "\n"; 
+               . $this->getRoleWhere(($linkIsLHS) ? $targetTable : $startingTable) . "\n";
 
         if($return_array){
             return array(
@@ -267,7 +273,7 @@ class One2MBeanRelationship extends One2MRelationship
         $query = '';
 
         $alias = empty($params['join_table_alias']) ? "{$link->name}_rel": $params['join_table_alias'];
-        $alias = $GLOBALS['db']->getHelper()->getValidDBName($alias, 'alias');
+        $alias = $GLOBALS['db']->getValidDBName($alias, false, 'alias');
 
         //Set up any table aliases required
         $targetTableWithAlias = "$targetTable $alias";
@@ -292,14 +298,20 @@ class One2MBeanRelationship extends One2MRelationship
     }
 
     /**
-     * @param  $lhs
-     * @param  $rhs
-     * @return bool
+     * Check to see if the relationship already exist.
+     *
+     * If it does return true otherwise return false
+     *
+     * @param SugarBean $lhs        Left hand side of the relationship
+     * @param SugarBean $rhs        Right hand side of the relationship
+     * @return boolean
      */
     public function relationship_exists($lhs, $rhs)
     {
+        // we need the key that is stored on the rhs to compare tok
+        $lhsIDName = $this->def['rhs_key'];
 
-        return false;
+        return (isset($rhs->fetched_row[$lhsIDName]) && $rhs->$lhsIDName == $rhs->fetched_row[$lhsIDName] && $rhs->$lhsIDName == $lhs->id);
     }
 
     public function getRelationshipTable()

@@ -47,6 +47,9 @@ class OauthTokensViewAuthorize extends SugarView
             sugar_die($GLOBALS['mod_strings']['LBL_OAUTH_DISABLED']);
         }
         global $current_user;
+        if(!isset($_REQUEST['token']) && isset($_REQUEST['oauth_token'])) {
+            $_REQUEST['token'] = $_REQUEST['oauth_token'];
+        }
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('APP', $GLOBALS['app_strings']);
         $sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);

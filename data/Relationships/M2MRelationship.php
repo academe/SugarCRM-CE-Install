@@ -40,8 +40,9 @@ require_once("data/Relationships/SugarRelationship.php");
 
 /**
  * Represents a many to many relationship that is table based.
+ * @api
  */
-class M2MRelationship extends SugarRelationship 
+class M2MRelationship extends SugarRelationship
 {
     var $type = "many-to-many";
 
@@ -161,7 +162,7 @@ class M2MRelationship extends SugarRelationship
             "id" => create_guid(),
             $this->def['join_key_lhs'] => $lhs->id,
             $this->def['join_key_rhs'] => $rhs->id,
-            'date_modified' => TimeDate::getInstance()->getNow()->asDb(),
+            'date_modified' => TimeDate::getInstance()->nowDb(),
             'deleted' => 0,
         );
 
@@ -207,6 +208,10 @@ class M2MRelationship extends SugarRelationship
 
     public function remove($lhs, $rhs)
     {
+        if(!($lhs instanceof SugarBean) || !($rhs instanceof SugarBean)) {
+            $GLOBALS['log']->fatal("LHS and RHS must be beans");
+            return false;
+        }
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
 

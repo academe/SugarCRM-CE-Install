@@ -40,6 +40,7 @@ require_once("data/Relationships/M2MRelationship.php");
 
 /**
  * Represents a one to many relationship that is table based.
+ * @api
  */
 class One2MRelationship extends M2MRelationship
 {

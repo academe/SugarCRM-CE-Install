@@ -88,7 +88,7 @@ class ImportViewConfirm extends ImportView
         }
         elseif( !empty($_REQUEST['tmp_file']) )
         {
-            $uploadFileName = $_REQUEST['tmp_file'];
+            $uploadFileName = "upload://".basename($_REQUEST['tmp_file']);
         }
         else
         {

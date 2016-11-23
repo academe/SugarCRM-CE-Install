@@ -167,22 +167,22 @@ class ImportMap extends SugarBean
         }
         $this->default_values = implode("&", $output);
     }
-    
+
     /**
      * @see SugarBean::retrieve()
      */
     public function retrieve($id = -1, $encode=true,$deleted=true)
 	{
 	    $returnVal = parent::retrieve($id,$encode,$deleted);
-	    
+
 	    if ( !($returnVal instanceOf $this) ) {
 	        return $returnVal;
 	    }
-	    
+
 	    if ( $this->source == 'tab' && $this->delimiter == '' ) {
 	        $this->delimiter = "\t";
 	    }
-	    
+
 	    return $this;
 	}
 
@@ -337,7 +337,7 @@ class ImportMap extends SugarBean
         $result = $this->db->query($query,true," Error: ");
         $obj_arr = array();
 
-        while ($row = $this->db->fetchByAssoc($result,-1,FALSE) ) {
+        while ($row = $this->db->fetchByAssoc($result,FALSE) ) {
             $focus = new ImportMap();
 
             foreach($this->column_fields as $field) {

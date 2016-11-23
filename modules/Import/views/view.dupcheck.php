@@ -62,7 +62,7 @@ class ImportViewDupcheck extends ImportView
         global $sugar_config;
 
         $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
-        
+
         $this->instruction = 'LBL_SELECT_DUPLICATE_INSTRUCTION';
         $this->ss->assign('INSTRUCTION', $this->getInstruction());
 
@@ -100,14 +100,14 @@ class ImportViewDupcheck extends ImportView
     private function _getJS()
     {
         global $mod_strings, $sugar_config;
-        
+
         $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
-        $uploadFileName = $_REQUEST['tmp_file'];
+        $uploadFileName = "upload://".basename($_REQUEST['tmp_file']);
         $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
         $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
         $count = $splitter->getFileCount()-1;
         $recCount = $splitter->getRecordCount();
-        
+
         //BEGIN DRAG DROP WIDGET
         $idc = new ImportDuplicateCheck($this->bean);
         $dupe_indexes = $idc->getDuplicateCheckIndexes();
@@ -149,7 +149,7 @@ class ImportViewDupcheck extends ImportView
                 $dupe_disabled[] =  array("dupeVal" => $ik, "label" => $iv);
             }
         }
-        
+
         $enabled_dupes = json_encode($dupe_enabled);
         $disabled_dupes = json_encode($dupe_disabled);
 
@@ -267,7 +267,7 @@ ProcessImport = new function()
 	var disabled_dupes = {$disabled_dupes};
 	var lblEnabled = '{$lblUsed}';
 	var lblDisabled = '{$lblNotUsed}';
-	
+
 
 	SUGAR.enabledDupesTable = new YAHOO.SUGAR.DragDropTable(
 		"enabled_div",
@@ -334,7 +334,7 @@ ProcessImport = new function()
 document.getElementById('goback').onclick = function(){
     document.getElementById('importstepdup').action.value = 'step3';
     document.getElementById('importstepdup').to_pdf.value = '0';
-        var success = function(data) {		
+        var success = function(data) {
 			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
@@ -346,7 +346,7 @@ document.getElementById('goback').onclick = function(){
 			eval(response['script']);
 
 		}
-    
+
         var formObject = document.getElementById('importstepdup');
 		YAHOO.util.Connect.setForm(formObject);
 		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});

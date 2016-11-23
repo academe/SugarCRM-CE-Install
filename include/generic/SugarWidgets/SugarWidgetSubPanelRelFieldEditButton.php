@@ -38,7 +38,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
+
 //TODO Rename this to edit link
 class SugarWidgetSubPanelRelFieldEditButton extends SugarWidgetField
 {

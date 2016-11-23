@@ -76,7 +76,7 @@ SUGAR.importWizard = function() {
 						var oScript= document.createElement("script");
 						oScript.type = "text/javascript";
 						oScript.id = "sugar_grp_yui_widgets";
-						oScript.src="include/javascript/sugar_grp_yui_widgets.js";
+						oScript.src="cache/include/javascript/sugar_grp_yui_widgets.js";
 						oHead.appendChild( oScript);
 				}
 				
@@ -84,7 +84,7 @@ SUGAR.importWizard = function() {
 						var oScriptOverLib= document.createElement("script");
 						oScriptOverLib.type = "text/javascript";
 						oScriptOverLib.id = "sugar_grp_overlib";
-						oScriptOverLib.src="include/javascript/sugar_grp_overlib.js";
+						oScriptOverLib.src="cache/include/javascript/sugar_grp_overlib.js";
 						oHead.appendChild( oScriptOverLib);
 						
 						var overDiv= document.createElement("div");

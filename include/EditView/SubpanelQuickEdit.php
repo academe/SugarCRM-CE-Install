@@ -38,9 +38,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once('include/EditView/EditView2.php');
+/**
+ * Quick edit form in the subpanel
+ * @api
+ */
 class SubpanelQuickEdit{
 	var $defaultProcess = true;
-	
+
 	function SubpanelQuickEdit($module, $view='QuickEdit', $proccessOverride = false){
         //treat quickedit and quickcreate views as the same
         if($view == 'QuickEdit') {$view = 'QuickCreate';}
@@ -93,26 +97,26 @@ class SubpanelQuickEdit{
 		$this->ev->defs['templateMeta']['form']['buttons'] = array('SUBPANELSAVE', 'SUBPANELCANCEL', 'SUBPANELFULLFORM');
         $this->ev->defs['templateMeta']['form']['hideAudit'] = true;
 
-		
+
 		$viewEditSource = 'modules/'.$module.'/views/view.edit.php';
 		if (file_exists('custom/'. $viewEditSource)) {
 			$viewEditSource = 'custom/'. $viewEditSource;
 		}
 
 		if(file_exists($viewEditSource) && !$proccessOverride) {
-            include($viewEditSource); 
+            include($viewEditSource);
             $c = $module . 'ViewEdit';
-            
+
             if(class_exists($c)) {
 	            $view = new $c;
 	            if($view->useForSubpanel) {
 	            	$this->defaultProcess = false;
-	            	
+
 	            	//Check if we shold use the module's QuickCreate.tpl file
 	            	if($view->useModuleQuickCreateTemplate && file_exists('modules/'.$module.'/tpls/QuickCreate.tpl')) {
-	            	   $this->ev->defs['templateMeta']['form']['headerTpl'] = 'modules/'.$module.'/tpls/QuickCreate.tpl'; 
+	            	   $this->ev->defs['templateMeta']['form']['headerTpl'] = 'modules/'.$module.'/tpls/QuickCreate.tpl';
 	            	}
-	            	
+
 		            $view->ev = & $this->ev;
 		            $view->ss = & $this->ev->ss;
 					$class = $GLOBALS['beanList'][$module];
@@ -123,16 +127,16 @@ class SubpanelQuickEdit{
 					}
 					$this->ev->formName = 'form_Subpanel'.$this->ev->view .'_'.$module;
 					$view->showTitle = false; // Do not show title since this is for subpanel
-		            $view->display(); 
+		            $view->display();
 	            }
             }
 		} //if
-		
+
 		if($this->defaultProcess && !$proccessOverride) {
 		   $this->process($module);
 		}
 	}
-	
+
 	function process($module){
         $form_name = 'form_Subpanel'.$this->ev->view .'_'.$module;
         $this->ev->formName = $form_name;

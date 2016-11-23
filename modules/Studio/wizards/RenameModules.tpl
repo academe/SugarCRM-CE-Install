@@ -145,9 +145,9 @@
 </table>
 </table>
 
+{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
+{sugar_getscript file="include/javascript/yui/dragdrop.js"}
 {literal}
-<script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
-<script src = "include/javascript/yui/dragdrop.js" ></script>
 <script>
 
     var lastField = '';
@@ -162,7 +162,7 @@
             if(checkForErrors(lastRowCount))
                 return true;
 
-            setDropDownValue(lastRowCount, lastField.innerHTML, true);
+            collapseRow(lastRowCount);
         }
         if(tempLastField == field)
             return;
@@ -173,7 +173,6 @@
 
         var textspan =  document.getElementById('slot' + rowCount + '_textspan');
         var text = document.getElementById("slot" + rowCount + "_text");
-        text.value=field.innerHTML;
         textspan.style.display='inline'
         text.focus();
     }
@@ -198,6 +197,28 @@
         return foundErrors;
     }
 
+    /*
+        scrub input for bug 50607: able to enter HTML/JS and execute through module renaming.
+     */
+    function cleanModuleName(val)
+    {
+        return YAHOO.lang.escapeHTML(val);
+    }
+
+    /*
+        pulled out routine to keep scrubbing from being called multiple times
+     */
+    function collapseRow(rowCount)
+    {
+        var text =  document.getElementById('slot' + rowCount + '_text');
+        var textspan =  document.getElementById('slot' + rowCount + '_textspan');
+        var span = document.getElementById('slot' + rowCount + '_value');
+        textspan.style.display = 'none';
+        span.style.display = 'inline';
+        lastField = '';
+        lastRowCount = -1;
+    }
+
     function setSingularDropDownValue(rowCount)
     {
         document.getElementById('svalue_'+ rowCount).value = document.getElementById('slot' + rowCount + '_stext').value;
@@ -210,17 +231,14 @@
             return true;
 
         document.getElementById('value_' + rowCount).value = val;
-        var text =  document.getElementById('slot' + rowCount + '_text');
-        var textspan =  document.getElementById('slot' + rowCount + '_textspan');
+
         var span = document.getElementById('slot' + rowCount + '_value');
         if(collapse)
         {
-            span.innerHTML  = val;
-            textspan.style.display = 'none';
-            span.style.display = 'inline';
+            span.innerHTML  = cleanModuleName(val);
+            collapseRow(rowCount);
         }
-        lastField = '';
-        lastRowCount = -1;
+
         setSingularDropDownValue(rowCount);
     }
 

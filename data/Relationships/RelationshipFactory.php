@@ -39,6 +39,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once("data/Relationships/SugarRelationship.php");
 
+/**
+ * Create relationship objects
+ * @api
+ */
 class SugarRelationshipFactory {
     static $rfInstance;
 
@@ -198,7 +202,7 @@ class SugarRelationshipFactory {
     }
 
 	protected function getCacheFile() {
-		return "{$GLOBALS['sugar_config']['cache_dir']}Relationships/relationships.cache.php";
+		return sugar_cached("Relationships/relationships.cache.php");
 	}
 
 

@@ -40,10 +40,12 @@ if(r.title)
 {document.title=html_entity_decode(r.title);}
 if(r.action)
 {action_sugar_grp1=r.action;}
+if(r.favicon)
+{SUGAR.ajaxUI.setFavicon(r.favicon);}
 var c=document.getElementById("content");c.innerHTML=cont;SUGAR.util.evalScript(cont);if(typeof(r.responseTime)!='undefined'){var rt=document.getElementById('responseTime');if(rt!=null){rt.innerHTML=r.responseTime;}}}catch(e){SUGAR.ajaxUI.showErrorMessage(o.responseText);}},showErrorMessage:function(errorMessage)
 {if(!SUGAR.ajaxUI.errorPanel){SUGAR.ajaxUI.errorPanel=new YAHOO.widget.Panel("ajaxUIErrorPanel",{modal:false,visible:true,constraintoviewport:true,width:"800px",height:"600px",close:true});}
-var panel=SUGAR.ajaxUI.errorPanel;panel.setHeader(SUGAR.language.get('app_strings','ERR_AJAX_LOAD'));panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none;marginheight="0" marginwidth="0" frameborder="0""></iframe>');panel.setFooter(SUGAR.language.get('app_strings','ERR_AJAX_LOAD_FOOTER'));panel.render(document.body);SUGAR.util.doWhen(function(){var f=document.getElementById("ajaxErrorFrame");return f!=null&&f.contentWindow!=null&&f.contentWindow.document!=null;},function(){document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML=errorMessage;window.setTimeout('throw "AjaxUI error parsing response"',300);});panel.show();panel.center();throw"AjaxUI error parsing response";},canAjaxLoadModule:function(module)
-{if(typeof(SUGAR.config.disableAjaxUI)!='undefined'&&SUGAR.config.disableAjaxUI==true){return false;}
+var panel=SUGAR.ajaxUI.errorPanel;panel.setHeader(SUGAR.language.get('app_strings','ERR_AJAX_LOAD'));panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none;marginheight="0" marginwidth="0" frameborder="0""></iframe>');panel.setFooter(SUGAR.language.get('app_strings','ERR_AJAX_LOAD_FOOTER'));panel.render(document.body);SUGAR.util.doWhen(function(){var f=document.getElementById("ajaxErrorFrame");return f!=null&&f.contentWindow!=null&&f.contentWindow.document!=null;},function(){document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML=errorMessage;window.setTimeout('throw "AjaxUI error parsing response"',300);});SUGAR.ajaxUI.errorMessage=errorMessage;window.setTimeout('if((typeof(document.getElementById("ajaxErrorFrame")) == "undefined" || typeof(document.getElementById("ajaxErrorFrame")) == null  || document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML == "")){document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML=SUGAR.ajaxUI.errorMessage;}',3000);panel.show();panel.center();throw"AjaxUI error parsing response";},canAjaxLoadModule:function(module)
+{var checkLS=/&LicState=check/.exec(window.location.search);if(checkLS||(typeof(SUGAR.config.disableAjaxUI)!='undefined'&&SUGAR.config.disableAjaxUI==true)){return false;}
 var bannedModules=SUGAR.config.stockAjaxBannedModules;if(typeof(bannedModules)=='undefined')
 return false;if(typeof(SUGAR.config.addAjaxBannedModules)!='undefined'){bannedModules.concat(SUGAR.config.addAjaxBannedModules);}
 if(typeof(SUGAR.config.overrideAjaxBannedModules)!='undefined'){bannedModules=SUGAR.config.overrideAjaxBannedModules;}
@@ -84,4 +86,7 @@ SUGAR_callsInProgress--;},print:function()
 if(document.getElementById('ajaxloading_c'))
 document.getElementById('ajaxloading_c').style.display='';SUGAR.ajaxUI.loadingPanel.show();},hideLoadingPanel:function()
 {SUGAR.ajaxUI.loadingPanel.hide();if(document.getElementById('ajaxloading_c'))
-document.getElementById('ajaxloading_c').style.display='none';}};
+document.getElementById('ajaxloading_c').style.display='none';},setFavicon:function(data)
+{var head=document.getElementsByTagName("head")[0];var links=head.getElementsByTagName("link");var re=/\bicon\b/i;for(var i=0;i<links.length;i++){if(re.test(links[i].rel))
+{head.removeChild(links[i]);}}
+var link=document.createElement("link");link.href=data.url;link.type=data.type;link.rel="icon";head.appendChild(link);}};

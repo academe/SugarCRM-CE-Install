@@ -36,7 +36,7 @@
 
 *}
 
-<tr class='pagination'>
+<tr class='pagination' role='presentation'>
     <td colspan='{$colCount}'>
         <table border='0' cellpadding='0' cellspacing='0' width='100%' class='paginationTable'>
             <tr>

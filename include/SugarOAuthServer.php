@@ -38,8 +38,8 @@
 require_once 'modules/OAuthTokens/OAuthToken.php';
 require_once 'modules/OAuthKeys/OAuthKey.php';
 /**
- *
  * Sugar OAuth provider implementation
+ * @api
  */
 class SugarOAuthServer
 {
@@ -137,6 +137,10 @@ class SugarOAuthServer
         return Zend_Oauth_Provider::TOKEN_REJECTED;
     }
 
+    /**
+     * Decode POST/GET via from_html()
+     * @return array decoded data
+     */
     protected function decodePostGet()
     {
         $data = $_GET;
@@ -215,7 +219,7 @@ class SugarOAuthServer
      */
     public function authUrl()
     {
-        return urlencode($GLOBALS['sugar_config']['site_url']."index.php?module=OAuthTokens&action=authorize");
+        return urlencode(rtrim($GLOBALS['sugar_config']['site_url'],'/')."/index.php?module=OAuthTokens&action=authorize");
     }
 
     /**

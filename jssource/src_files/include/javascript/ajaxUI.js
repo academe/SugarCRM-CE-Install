@@ -60,6 +60,10 @@ SUGAR.ajaxUI = {
             {
                 action_sugar_grp1 = r.action;
             }
+            if (r.favicon)
+            {
+                SUGAR.ajaxUI.setFavicon(r.favicon);
+            }
 
             var c = document.getElementById("content");
             c.innerHTML = cont;
@@ -102,6 +106,11 @@ SUGAR.ajaxUI = {
 					document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = errorMessage;
 					window.setTimeout('throw "AjaxUI error parsing response"', 300);
 			});
+
+            //fire off a delayed check to make sure error message was rendered.
+            SUGAR.ajaxUI.errorMessage = errorMessage;
+            window.setTimeout('if((typeof(document.getElementById("ajaxErrorFrame")) == "undefined" || typeof(document.getElementById("ajaxErrorFrame")) == null  || document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML == "")){document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML=SUGAR.ajaxUI.errorMessage;}',3000);
+
             panel.show();
             panel.center();
 
@@ -109,8 +118,10 @@ SUGAR.ajaxUI = {
     },
     canAjaxLoadModule : function(module)
     {
-        // Return false if ajax ui is completely disabled
-        if(typeof(SUGAR.config.disableAjaxUI) != 'undefined' && SUGAR.config.disableAjaxUI == true){
+        var checkLS = /&LicState=check/.exec(window.location.search);
+
+        // Return false if ajax ui is completely disabled, or if license state is set to check
+        if( checkLS || (typeof(SUGAR.config.disableAjaxUI) != 'undefined' && SUGAR.config.disableAjaxUI == true)){
             return false;
         }
         
@@ -324,5 +335,28 @@ SUGAR.ajaxUI = {
         
         if (document.getElementById('ajaxloading_c'))
             document.getElementById('ajaxloading_c').style.display = 'none';
+    },
+    setFavicon: function(data)
+    {
+        var head = document.getElementsByTagName("head")[0];
+
+        // first remove all rel="icon" links as long as updating an existing one
+        // could take no effect
+        var links = head.getElementsByTagName("link");
+        var re = /\bicon\b/i;
+        for (var i = 0; i < links.length; i++)        {
+            if (re.test(links[i].rel))
+            {
+                head.removeChild(links[i]);
+            }
+        }
+
+        var link = document.createElement("link");
+
+        link.href = data.url;
+        // type attribute is important for Google Chrome browser
+        link.type = data.type;
+        link.rel = "icon";
+        head.appendChild(link);
     }
 };
