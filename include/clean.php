@@ -104,10 +104,12 @@ class SugarCleaner
         // for style
         //$config->set('Filter.ExtractStyleBlocks', true);
         $config->set('Filter.ExtractStyleBlocks.TidyImpl', false); // can't use csstidy, GPL
-        // for object
-        $config->set('HTML.SafeObject', true);
-        // for embed
-        $config->set('HTML.SafeEmbed', true);
+        if(!empty($GLOBALS['sugar_config']['html_allow_objects'])) {
+            // for object
+            $config->set('HTML.SafeObject', true);
+            // for embed
+            $config->set('HTML.SafeEmbed', true);
+        }
         $config->set('Output.FlashCompat', true);
         // for iframe and xmp
         $config->set('Filter.Custom',  array(new HTMLPurifier_Filter_Xmp()));

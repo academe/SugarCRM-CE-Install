@@ -335,6 +335,7 @@ class M2MRelationship extends SugarRelationship
             $knownKey = $this->def['join_key_lhs'];
             $targetKey = $this->def['join_key_rhs'];
             $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+            $relatedSeedKey = $this->def['rhs_key'];
             if (!empty($params['where']))
                 $whereTable = (empty($params['right_join_table_alias']) ? $relatedSeed->table_name : $params['right_join_table_alias']);
         }
@@ -343,6 +344,7 @@ class M2MRelationship extends SugarRelationship
             $knownKey = $this->def['join_key_rhs'];
             $targetKey = $this->def['join_key_lhs'];
             $relatedSeed = BeanFactory::getBean($this->getLHSModule());
+            $relatedSeedKey = $this->def['lhs_key'];
             if (!empty($params['where']))
                 $whereTable = (empty($params['left_join_table_alias']) ? $relatedSeed->table_name : $params['left_join_table_alias']);
         }
@@ -358,9 +360,14 @@ class M2MRelationship extends SugarRelationship
         }
 
         $deleted = !empty($params['deleted']) ? 1 : 0;
-        $from = $rel_table;
-        if (!empty($params['where']))
+        $from = $rel_table . " ";
+        if (!empty($params['where'])) {
             $from .= ", $whereTable";
+            if (isset($relatedSeed->custom_fields)) {
+                $customJoin = $relatedSeed->custom_fields->getJOIN();
+                $from .= $customJoin ? $customJoin['join'] : '';
+            }
+        }
 
         if (empty($params['return_as_array'])) {
             $query = "SELECT $targetKey id FROM $from WHERE $where AND $rel_table.deleted=$deleted";

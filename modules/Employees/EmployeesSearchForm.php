@@ -76,7 +76,7 @@ class EmployeesSearchForm extends SearchForm {
         
         // Add in code to remove portal/group/hidden users
         $where_clauses[] = "users.portal_only = 0";
-        $where_clauses[] = "users.is_group = 0";
+        $where_clauses[] = "(users.is_group = 0 or users.is_group is null)";
         $where_clauses[] = "users.show_on_employees = 1";
         return $where_clauses;
     }

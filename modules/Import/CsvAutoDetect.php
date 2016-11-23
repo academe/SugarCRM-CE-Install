@@ -249,7 +249,7 @@ class CsvAutoDetect {
      * @param bool $heading true of it has header, false if not
      * @return bool true if header is found, false if error
      */
-    public function hasHeader(&$heading, $module) {
+    public function hasHeader(&$heading, $module, $encoding = null) {
 
         if (!$this->_parsed) {
             return false;
@@ -270,9 +270,16 @@ class CsvAutoDetect {
 
         $mod_strings = return_module_language($GLOBALS['current_language'], $module);
 
+        global $locale;
         // process only the first row
-        foreach ($this->_parser->data[0] as $val) {
-
+        foreach ($this->_parser->data[0] as $val)
+        {
+            if (!empty($encoding))
+            {
+                // Convert all values to UTF-8
+                $val = $locale->translateCharset($val, $encoding);
+            }
+            
             // bug51433 - everything relies on $val having a value so if it's empty,
             // we can skip this iteration and not get warnings
             if( !empty( $val ) )

@@ -370,27 +370,47 @@ var text='';if(json_objects['email_template_object']['fields']['text_only']==1)
 else
 {text=decodeURI(encodeURI(json_objects['email_template_object']['fields']['body_html'])).replace(/<BR>/ig,'\n').replace(/<br>/gi,"\n").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');document.getElementById('setEditor'+idx).checked=false;SUGAR.email2.composeLayout.renderTinyMCEToolBar(idx,0);}
 var tiny=SE.util.getTiny('htmleditor'+idx);var tinyHTML=tiny.getContent();var openTag='<div><span><span>';var closeTag='</span></span></div>';var htmllow=tinyHTML.toLowerCase();var start=htmllow.indexOf(openTag);if(start>-1){var htmlPart2=tinyHTML.substr(start);tinyHTML=text+htmlPart2;tiny.setContent(tinyHTML);}else{tiny.setContent(text);}
-setTimeout("SUGAR.email2.composeLayout.setSignature("+idx+");",500);},setSignature:function(idx){if(!tinyMCE)
+setTimeout("SUGAR.email2.composeLayout.setSignature("+idx+");",500);},setSignature:function(idx)
+{if(!tinyMCE)
 return false;var hide=document.getElementById('setEditor'+idx).checked;SE.composeLayout.renderTinyMCEToolBar(idx,hide);if(!SE.composeLayout.signatures){setTimeout("SE.composeLayout.setSignature("+idx+");",1000);return;}
 if(idx!=null){var sel=document.getElementById('signatures'+idx);}else{var sel=document.getElementById('signature_id');idx=SE.tinyInstances.currentHtmleditor;}
 if(typeof(SE.composeLayout.loadedTinyInstances[idx])!='undefined'&&SE.composeLayout.loadedTinyInstances[idx]==false){setTimeout("SE.composeLayout.setSignature("+idx+");",1000);return;}
 var signature='';try{signature=sel.options[sel.selectedIndex].value;}catch(e){}
-var openTag='<br class="signature-begin" />';var closeTag='<br class="signature-end" />';var t=tinyMCE.getInstanceById('htmleditor'+idx);if(typeof(t)!='undefined')
+var openTag='<div id="signature-begin"><br />';var closeTag='<span>&nbsp;</span></div>';var t=tinyMCE.getInstanceById('htmleditor'+idx);if(typeof(t)!='undefined')
 {t.contentDocument=t.contentWindow.document;var html=t.getContent();}
 else
 {var html='';}
-var htmllow=html.toLowerCase();var start=htmllow.indexOf(openTag);var end=htmllow.indexOf(closeTag);if(end>=0){end+=closeTag.length;}
-else{end=htmllow.length;}
-if(signature==''){if(start>-1){var htmlPart1=html.substr(0,start);var htmlPart2=html.substr(end,html.length);html=htmlPart1+htmlPart2;t.setContent(html);}
+var htmllow=html.toLowerCase();var start=htmllow.indexOf(openTag);var end=htmllow.indexOf(closeTag,start);if(end>=0)
+{end+=closeTag.length;}
+else
+{end=htmllow.length;}
+if(signature=='')
+{if(start>-1)
+{var htmlPart1=html.substr(0,start);var htmlPart2=html.substr(end,html.length);html=htmlPart1+htmlPart2;t.setContent(html);}
 SE.signatures.lastAttemptedLoad='';return false;}
 if(!SE.signatures.lastAttemptedLoad)
-SE.signatures.lastAttemptedLoad='';SE.signatures.lastAttemptedLoad=signature;if(typeof(SE.signatures[signature])=='undefined'){SE.signatures.lastAttemptedLoad='';SE.signatures.targetInstance=(idx)?idx:"";AjaxObject.target='';AjaxObject.startRequest(callbackLoadSignature,urlStandard+"&emailUIAction=getSignature&id="+signature);}else{var newSignature=this.prepareSignature(SE.signatures[signature]);if(SE.signatures.lastAttemptedLoad&&start>-1){var htmlPart1=html.substr(0,start);var htmlPart2=html.substr(end,html.length);html=htmlPart1+htmlPart2;}
-start=html.indexOf('<div><hr></div>');if(SE.userPrefs.signatures.signature_prepend=='true'&&start>-1){var htmlPart1=html.substr(0,start);var htmlPart2=html.substr(start,html.length);var newHtml=htmlPart1+openTag+newSignature+closeTag+htmlPart2;}else if(SUGAR.email2.userPrefs.signatures.signature_prepend=='true'){var newHtml=html;var spacing='<span id="spacing"><br /><br /><br /></span>&nbsp;';var customSpacingStart=html.indexOf(spacing);if(customSpacingStart>-1)
+{SE.signatures.lastAttemptedLoad='';}
+SE.signatures.lastAttemptedLoad=signature;if(typeof(SE.signatures[signature])=='undefined')
+{SE.signatures.lastAttemptedLoad='';SE.signatures.targetInstance=(idx)?idx:"";AjaxObject.target='';AjaxObject.startRequest(callbackLoadSignature,urlStandard+"&emailUIAction=getSignature&id="+signature);}
+else
+{var newSignature=this.prepareSignature(SE.signatures[signature]);if(SE.signatures.lastAttemptedLoad&&start>-1)
+{var htmlPart1=html.substr(0,start);var htmlPart2=html.substr(end,html.length);html=htmlPart1+htmlPart2;}
+start=html.indexOf('<div><hr></div>');if(SE.userPrefs.signatures.signature_prepend=='true'&&start>-1)
+{var htmlPart1=html.substr(0,start);var htmlPart2=html.substr(start,html.length);var newHtml=htmlPart1+openTag+newSignature+closeTag+htmlPart2;}
+else if(SUGAR.email2.userPrefs.signatures.signature_prepend=='true')
+{var newHtml=html;var spacing='<span id="spacing"><br /><br /><br /></span>&nbsp;';var customSpacingStart=html.indexOf(spacing);if(customSpacingStart>-1)
 {var part1=newHtml.substr(0,customSpacingStart);var part2=newHtml.substr(customSpacingStart+spacing.length,newHtml.length);newHtml=part1+part2;}
 var bodyStartTag='<body>';var body=newHtml.indexOf(bodyStartTag);if(body>-1)
 {var part1=newHtml.substr(0,body+bodyStartTag.length);var part2=newHtml.substr(body+bodyStartTag.length,newHtml.length);newHtml=part1+spacing+openTag+newSignature+closeTag+part2;}
 else
-{newHtml=openTag+newSignature+closeTag+newHtml;}}else{var body=html.indexOf('</body>');if(body>-1){var part1=html.substr(0,body);var part2=html.substr(body,html.length);var newHtml=part1+openTag+newSignature+closeTag+part2;}else{var newHtml=html+openTag+newSignature+closeTag;}}
+{newHtml=openTag+newSignature+closeTag+newHtml;}}
+else
+{var bodyStringEmpty=htmllow.indexOf("<body>")>-1&&htmllow.replace(/\s/g,"").match(/<body>.+<\/body>/)==null;if(htmllow.length==0||bodyStringEmpty)
+{openTag="<br />"+openTag;}
+var body=html.indexOf('</body>');if(body>-1)
+{var part1=html.substr(0,body);var part2=html.substr(body,html.length);var newHtml=part1+openTag+newSignature+closeTag+part2;}
+else
+{var newHtml=html+openTag+newSignature+closeTag;}}
 t.setContent(newHtml);}},prepareSignature:function(str){var signature=new String(str);signature=signature.replace(/&lt;/gi,'<');signature=signature.replace(/&gt;/gi,'>');return signature;},showAttachmentPanel:function(idx){var east=SE.composeLayout[idx].getUnitByPosition("right");var tabs=SE.composeLayout[idx].rightTabs;east.expand();tabs.set("activeTab",tabs.getTab(0));},showOptionsPanel:function(idx){var east=SE.composeLayout[idx].getUnitByPosition("right");var tabs=SE.composeLayout[idx].rightTabs;east.expand();tabs.set("activeTab",tabs.getTab(1));},showContactsPanel:function(){SE.complexLayout.regions.west.showPanel("contactsTab");},addDocumentField:function(idx){var basket=document.getElementById('addedDocuments'+idx);if(basket){var index=(basket.childNodes.length / 7)-1;if(index<0)
 index=0;}else{index=0;}
 var test=document.getElementById('documentId'+idx+index);while(test!=null){index++;test=document.getElementById('documentId'+idx+index);}

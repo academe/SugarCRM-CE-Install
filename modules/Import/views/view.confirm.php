@@ -440,19 +440,6 @@ eoq;
         {
             array_unshift($rows, array_fill(0,1,'') );
         }
-
-        // to be displayed in UTF-8 format
-        global $locale;
-        $encoding = $importFile->autoDetectCharacterSet();
-        if (!empty($encoding) && $encoding != 'UTF-8') {
-            foreach ($rows as &$row) {
-                if (is_array($row)) {
-                    foreach ($row as &$val) {
-                        $val = $locale->translateCharset($val, $encoding);
-                    }
-                }
-            }
-        }
         
         foreach ($rows as &$row) {
             if (is_array($row)) {
@@ -461,7 +448,6 @@ eoq;
                 }
             }
         }
-    
         return $rows;
     }
 

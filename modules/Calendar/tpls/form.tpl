@@ -38,6 +38,7 @@
 <form id="CalendarEditView" name="CalendarEditView" method="POST">	
 		
 <input type="hidden" name="current_module" id="current_module" value="Meetings">
+<input type="hidden" name="return_module" id="return_module" value = "Calendar">
 <input type="hidden" name="record" id="record" value="">
 <input type="hidden" name="full_form" value="">
 <input type="hidden" name="user_invitees" id="user_invitees">

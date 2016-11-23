@@ -546,7 +546,7 @@ class Importer
 
         // Bug51192: check if there are any changes in the imported data
         $hasDataChanges = false;
-        $dataChanges=$focus->db->getDataChanges($focus);
+        $dataChanges=$focus->db->getAuditDataChanges($focus);
         
         if(!empty($dataChanges)) {
             foreach($dataChanges as $field=>$fieldData) {
