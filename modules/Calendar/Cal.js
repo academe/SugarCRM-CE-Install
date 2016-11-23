@@ -132,7 +132,7 @@ CAL.make_draggable(elm_id,"advanced");if(item.module_name!="Tasks"&&CAL.items_re
 CAL.make_resizable(elm_id,slot);}
 CAL.cut_record(item.record+id_suffix);if(CAL.view=="shared"){var end_time=$("#"+slot.id).parents("div:first").children("div:last").attr("time");var end_time_id=$("#"+slot.id).parents("div:first").children("div:last").attr("id");if(end_time&&end_time_id){var end_timestamp=parseInt(end_time_id.match(/t_([0-9]+)_.*/)[1])+1800;var share_coef=(end_timestamp-parseInt(item.timestamp))/ 1800;if(share_coef<duration_coef)
 el.style.height=parseInt((CAL.slot_height+1)*share_coef-1)+"px";}}}}
-CAL.get_header_text=function(type,time_start,text,record){var start_text=text;return start_text;}
+CAL.get_header_text=function(type,time_start,text,record){var start_text=(CAL.view=='month')?("<span class='start_time'>"+time_start+"</span> "+text):text;return start_text;}
 CAL.cut_record=function(id){var el=CAL.get(id);if(!el)
 return;var duration_coef=el.getAttribute("duration_coef");real_celcount=CAL.cells_per_day;var celpos=0;var s=el.parentNode;while(s.previousSibling){celpos++;s=s.previousSibling;}
 celpos=celpos+1;if(real_celcount-celpos-duration_coef<0)

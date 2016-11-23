@@ -881,7 +881,7 @@
 	}
 
 	CAL.get_header_text = function (type,time_start,text,record){
-			var start_text = text;
+			var start_text = (CAL.view=='month')?("<span class='start_time'>" + time_start + "</span> " + text) : text;
 			return start_text;
 	}
 	

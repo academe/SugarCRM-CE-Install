@@ -232,9 +232,9 @@ class OAuthToken extends SugarBean
 	{
 	    global $db;
 	    // delete invalidated tokens older than 1 day
-	    $db->query("DELETE FROM oauth_token WHERE status = ".self::INVALID." AND token_ts < ".time()-60*60*24);
+	    $db->query("DELETE FROM oauth_tokens WHERE tstate = ".self::INVALID." AND token_ts < ".(time()-60*60*24));
 	    // delete request tokens older than 1 day
-	    $db->query("DELETE FROM oauth_token WHERE status = ".self::REQUEST." AND token_ts < ".time()-60*60*24);
+	    $db->query("DELETE FROM oauth_tokens WHERE tstate = ".self::REQUEST." AND token_ts < ".(time()-60*60*24));
 	}
 
 	/**

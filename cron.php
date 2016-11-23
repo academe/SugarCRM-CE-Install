@@ -81,4 +81,9 @@ if(class_exists('DBManagerFactory')) {
 	$db->disconnect();
 }
 
+// If we have a session left over, destroy it
+if(session_id()) {
+    session_destroy();
+}
+
 if($exit_on_cleanup) exit($jobq->runOk()?0:1);

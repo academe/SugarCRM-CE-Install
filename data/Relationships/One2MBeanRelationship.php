@@ -76,7 +76,8 @@ class One2MBeanRelationship extends One2MRelationship
             $prevRelated = $oldLink->getBeans(null);
             foreach($prevRelated as $oldLHS)
             {
-                $this->remove($oldLHS, $rhs, false);
+                if ($oldLHS->id != $lhs->id)
+                    $this->remove($oldLHS, $rhs, false);
             }
         }
 

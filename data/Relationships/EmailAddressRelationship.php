@@ -131,4 +131,28 @@ class EmailAddressRelationship extends M2MRelationship
 
         return true;
     }
+
+    /**
+     * Gets the relationship role column check for the where clause
+     * This overload adds additional bean check for the primary_address variable.
+     * @param string $table
+     * @param bool $ignore_role_filter
+     * @return string
+     */
+    protected function getRoleWhere($table = "", $ignore_role_filter = false)
+    {
+        $roleCheck = parent::getRoleWhere($table, $ignore_role_filter);
+
+        if ($this->def['relationship_role_column'] == 'primary_address' &&
+            $this->def["relationship_role_column_value"] == '1') {
+            if (empty($table)) {
+                $roleCheck .= " AND bean_module";
+            } else {
+                $roleCheck .= " AND $table.bean_module";
+            }
+            $roleCheck .= " = '" . $this->getLHSModule() . "'";
+        }
+
+        return $roleCheck;
+    }
 }

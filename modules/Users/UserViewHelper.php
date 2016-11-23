@@ -603,7 +603,7 @@ class UserViewHelper {
 
         if (!isset($currentFDOW)) {$currentFDOW = 0;}
         $this->ss->assign("FDOWCURRENT", $currentFDOW);
-        $this->ss->assign("FDOWDISPLAY", $app_list_strings['dom_cal_day_long'][$currentFDOW]);
+        $this->ss->assign("FDOWDISPLAY", $fdowDays[$currentFDOW]);
 
         //// Numbers and Currency display
         require_once('modules/Currencies/ListCurrency.php');

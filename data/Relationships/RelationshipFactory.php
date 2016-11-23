@@ -168,7 +168,10 @@ class SugarRelationshipFactory {
         //Reload ALL the module vardefs....
         foreach($beanList as $moduleName => $beanName)
         {
-            VardefManager::loadVardef($moduleName, BeanFactory::getObjectName($moduleName));
+            VardefManager::loadVardef($moduleName, BeanFactory::getObjectName($moduleName), false, array(
+                //If relationships are not yet loaded, we can't figure out the rel_calc_fields.
+                "ignore_rel_calc_fields" => true,
+            ));
         }
 
         $relationships = array();
@@ -198,6 +201,12 @@ class SugarRelationshipFactory {
         sugar_file_put_contents_atomic($this->getCacheFile(), $out);
 
         $this->relationships = $relationships;
+
+        //Now load all vardefs a second time populating the rel_calc_fields
+        foreach ($beanList as $moduleName => $beanName) {
+            VardefManager::loadVardef($moduleName, BeanFactory::getObjectName($moduleName));
+        }
+
         $buildingRelCache = false;
     }
 

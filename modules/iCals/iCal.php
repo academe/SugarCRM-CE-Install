@@ -132,13 +132,13 @@ class iCal extends vCal {
         $dueHour = 0;
         $dueMin = 0;
         if ($validDueDate) {
-            $dateDueArr = split("-", $task->date_due);
+            $dateDueArr = explode("-", $task->date_due);
             $dueYear = (int)$dateDueArr[0];
             $dueMonth = (int)$dateDueArr[1];
             $dueDay = (int)$dateDueArr[2];
 
             if ($validDueTime) {
-                $timeDueArr = split(":", $task->time_due);
+                $timeDueArr = explode(":", $task->time_due);
                 $dueHour = (int)$timeDueArr[0];
                 $dueMin = (int)$timeDueArr[1];
             }

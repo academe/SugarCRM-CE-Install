@@ -337,6 +337,7 @@ abstract class SugarRelationship
         $custom_logic_arguments['related_id'] = $related->id;
         $custom_logic_arguments['module'] = $focus->module_dir;
         $custom_logic_arguments['related_module'] = $related->module_dir;
+        $custom_logic_arguments['related_bean'] = $related;
         $custom_logic_arguments['link'] = $link_name;
         $custom_logic_arguments['relationship'] = $this->name;
 

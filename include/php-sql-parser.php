@@ -662,7 +662,8 @@ EOREGEX
 					$expression .= $token ;
 				}
 		  	}
-			if($expression) $expr[] = $this->process_select_expr(trim($expression));
+			$expression = trim($expression);
+			if($expression) $expr[] = $this->process_select_expr($expression);
 			return $expr;
 		}
 
@@ -670,6 +671,11 @@ EOREGEX
 		   is provided, and we set the type of expression.
 		*/
 		private function process_select_expr($expression) {
+
+            if (empty($expression)){
+                return '';
+            }
+
 			$capture = false;
 			$alias = "";
 			$base_expression = $expression;
