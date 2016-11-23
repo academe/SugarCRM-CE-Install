@@ -62,6 +62,11 @@ class EmailAddressRelationship extends M2MRelationship
             return false;
         }
 
+            if ($lhs->$lhsLinkName->beansAreLoaded())
+                $lhs->$lhsLinkName->addBean($rhs);
+
+            $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
+
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
 
@@ -74,6 +79,8 @@ class EmailAddressRelationship extends M2MRelationship
                 $lhs->$lhsLinkName->addBean($rhs);
 
             $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
+
+        return true;
     }
 
     public function remove($lhs, $rhs)
@@ -93,6 +100,16 @@ class EmailAddressRelationship extends M2MRelationship
             $GLOBALS['log']->fatal("could not load LHS $lhsLinkName");
             return false;
         }
+
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            if (!empty($lhs->$lhsLinkName))
+            {
+                $lhs->$lhsLinkName->load();
+                $this->callBeforeDelete($lhs, $rhs, $lhsLinkName);
+            }
+        }
+
         $dataToRemove = array(
             $this->def['join_key_lhs'] => $lhs->id,
             $this->def['join_key_rhs'] => $rhs->id
@@ -111,5 +128,7 @@ class EmailAddressRelationship extends M2MRelationship
                 $this->callAfterDelete($lhs, $rhs, $lhsLinkName);
             }
         }
+
+        return true;
     }
 }

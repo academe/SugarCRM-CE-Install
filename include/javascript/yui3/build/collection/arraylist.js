@@ -1,9 +1,8 @@
 /*
- Copyright (c) 2010, Yahoo! Inc. All rights reserved.
- Code licensed under the BSD License:
- http://developer.yahoo.com/yui/license.html
- version: 3.3.0
- build: 3167
- */
-YUI.add('arraylist',function(Y){var YArray=Y.Array,YArray_each=YArray.each,ArrayListProto;function ArrayList(items){if(items!==undefined){this._items=Y.Lang.isArray(items)?items:YArray(items);}else{this._items=this._items||[];}}
-ArrayListProto={item:function(i){return this._items[i];},each:function(fn,context){YArray_each(this._items,function(item,i){item=this.item(i);fn.call(context||item,item,i,this);},this);return this;},some:function(fn,context){return YArray.some(this._items,function(item,i){item=this.item(i);return fn.call(context||item,item,i,this);},this);},indexOf:function(needle){return YArray.indexOf(this._items,needle);},size:function(){return this._items.length;},isEmpty:function(){return!this.size();},toJSON:function(){return this._items;}};ArrayListProto._item=ArrayListProto.item;ArrayList.prototype=ArrayListProto;Y.mix(ArrayList,{addMethod:function(dest,names){names=YArray(names);YArray_each(names,function(name){dest[name]=function(){var args=YArray(arguments,0,true),ret=[];YArray_each(this._items,function(item,i){item=this._item(i);var result=item[name].apply(item,args);if(result!==undefined&&result!==item){ret.push(result);}},this);return ret.length?ret:this;};});}});Y.ArrayList=ArrayList;},'3.3.0');
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
+*/
+YUI.add("arraylist",function(e){var d=e.Array,c=d.each,a;function b(f){if(f!==undefined){this._items=e.Lang.isArray(f)?f:d(f);}else{this._items=this._items||[];}}a={item:function(f){return this._items[f];},each:function(g,f){c(this._items,function(j,h){j=this.item(h);g.call(f||j,j,h,this);},this);return this;},some:function(g,f){return d.some(this._items,function(j,h){j=this.item(h);return g.call(f||j,j,h,this);},this);},indexOf:function(f){return d.indexOf(this._items,f);},size:function(){return this._items.length;},isEmpty:function(){return !this.size();},toJSON:function(){return this._items;}};a._item=a.item;b.prototype=a;e.mix(b,{addMethod:function(f,g){g=d(g);c(g,function(h){f[h]=function(){var j=d(arguments,0,true),i=[];c(this._items,function(m,l){m=this._item(l);var k=m[h].apply(m,j);if(k!==undefined&&k!==m){i.push(k);}},this);return i.length?i:this;};});}});e.ArrayList=b;},"3.3.0");

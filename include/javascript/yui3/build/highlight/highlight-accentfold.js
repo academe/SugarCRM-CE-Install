@@ -1,12 +1,8 @@
 /*
- Copyright (c) 2010, Yahoo! Inc. All rights reserved.
- Code licensed under the BSD License:
- http://developer.yahoo.com/yui/license.html
- version: 3.3.0
- build: 3167
- */
-YUI.add('highlight-accentfold',function(Y){var AccentFold=Y.Text.AccentFold,Escape=Y.Escape,EMPTY_OBJECT={},Highlight=Y.mix(Y.Highlight,{allFold:function(haystack,needles,options){var template=Highlight._TEMPLATE,result=[],startPos=0;options=Y.merge({replacer:function(match,p1,foldedNeedle,pos){var len;if(p1&&!(/\s/).test(foldedNeedle)){return match;}
-len=foldedNeedle.length;result.push(haystack.substring(startPos,pos)+
-template.replace(/\{s\}/g,haystack.substr(pos,len)));startPos=pos+len;}},options||EMPTY_OBJECT);Highlight.all(AccentFold.fold(haystack),AccentFold.fold(needles),options);if(startPos<haystack.length-1){result.push(haystack.substr(startPos));}
-return result.join('');},startFold:function(haystack,needles){return Highlight.allFold(haystack,needles,{startsWith:true});},wordsFold:function(haystack,needles){var template=Highlight._TEMPLATE;return Highlight.words(haystack,AccentFold.fold(needles),{mapper:function(word,needles){if(needles.hasOwnProperty(AccentFold.fold(word))){return template.replace(/\{s\}/g,Escape.html(word));}
-return Escape.html(word);}});}});},'3.3.0',{requires:['highlight-base','text-accentfold']});
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
+*/
+YUI.add("highlight-accentfold",function(E){var D=E.Text.AccentFold,B=E.Escape,C={},A=E.mix(E.Highlight,{allFold:function(K,J,H){var I=A._TEMPLATE,F=[],G=0;H=E.merge({replacer:function(M,O,N,P){var L;if(O&&!(/\s/).test(N)){return M;}L=N.length;F.push(K.substring(G,P)+I.replace(/\{s\}/g,K.substr(P,L)));G=P+L;}},H||C);A.all(D.fold(K),D.fold(J),H);if(G<K.length-1){F.push(K.substr(G));}return F.join("");},startFold:function(G,F){return A.allFold(G,F,{startsWith:true});},wordsFold:function(H,G){var F=A._TEMPLATE;return A.words(H,D.fold(G),{mapper:function(J,I){if(I.hasOwnProperty(D.fold(J))){return F.replace(/\{s\}/g,B.html(J));}return B.html(J);}});}});},"3.3.0",{requires:["highlight-base","text-accentfold"]});

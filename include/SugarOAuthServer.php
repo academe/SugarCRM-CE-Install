@@ -189,6 +189,10 @@ class SugarOAuthServer
         $GLOBALS['log']->debug("OAUTH: requestToken");
         $token = OAuthToken::generate();
         $token->setConsumer($this->consumer);
+        $params = $this->provider->getOAuthParams();
+        if(!empty($params['oauth_callback']) && $params['oauth_callback'] != 'oob') {
+            $token->setCallbackURL($params['oauth_callback']);
+        }
         $token->save();
         return $token->queryString();
     }

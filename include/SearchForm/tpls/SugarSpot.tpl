@@ -36,61 +36,48 @@
 
 *}
 
-{literal}
-<style type="text/css">
-.QuickView {
-height:12px;
-cursor:pointer;
-}
-.SpanQuickView {
-visibility:hidden;
-padding-right:5px;
-}
-.gs_link {
-border:0;
-}
-</style>
-{/literal}
-<div id="SpotResults">
+<div id='SpotResults'>
 {if !empty($displayResults)}
-{foreach from=$displayResults key=module item=data}
-<div>
-    {if isset($appListStrings.moduleList[$module])}
-        {$appListStrings.moduleList[$module]}
-    {else}
-        {$module}
-    {/if}
-    {if !empty($displayMoreForModule[$module])}
-    {assign var="more" value=$displayMoreForModule[$module]}
-    <small class='more' onclick="DCMenu.spotZoom('{$more.query}', '{$module}', '{$more.offset}');">({$more.countRemaining} {$appStrings.LBL_SEARCH_MORE})</small>
-    {/if}
-</div>
-<table class="gs_table">
-    {if isset($data.link)}
-        <tr>
-            <td>{sugar_getimage name='blank.gif' width='16' height='16' border='0'}</td>
-            <td>
-                <a href="index.php?&module=Home&action=UnifiedSearch&query_string={$data.link.query_encoded}">{$data.link.total} {$appStrings.LBL_SEARCH_RESULTS}</a>
-            </td>
-        </tr>
-        </table>
-    {else}
-        {foreach from=$data key=id item=name}
-        <tr onmouseover="DCMenu.showQuickViewIcon('{$id}')" onmouseout="DCMenu.hideQuickViewIcon('{$id}')">
-        <td>
-        <span id="gs_div_{$id}" class="SpanQuickView">
-        <img id="gs_img_{$id}" class="QuickView" src="themes/default/images/Search.gif" alt="quick_view_{$id}" onclick="DCMenu.showQuickView('{$module}', '{$id}');">
-        </span>
-        </td>
-        <td><a href="index.php?module={$module}&action=DetailView&record={$id}" class="gs_link">{$name}</a></td>
-        </tr>
-        {/foreach}
-        </table>
-    {/if}
-{/foreach}
+    {foreach from=$displayResults key=module item=data}
+    <section>
+        <div class="resultTitle">
+            {if isset($appListStrings.moduleList[$module])}
+                {$appListStrings.moduleList[$module]}
+            {else}
+                {$module}
+            {/if}
+            {if !empty($displayMoreForModule[$module])}
+                {assign var="more" value=$displayMoreForModule[$module]}
+                <br>
+                <small class='more' onclick="DCMenu.spotZoom('{$more.query}', '{$module}', '{$more.offset}');">({$more.countRemaining} {$appStrings.LBL_SEARCH_MORE})</small>
+            {/if}
+        </div>
+            <ul>
+                {foreach from=$data key=id item=name}
+                        <div onmouseover="DCMenu.showQuickViewIcon('{$id}')" onmouseout="DCMenu.hideQuickViewIcon('{$id}')" class="gs_div" style="position: relative" >
+                            <div id="gs_div_{$id}" style="position: absolute;left: 0" class="SpanQuickView">
+                                    <img id="gs_img_{$id}" class="QuickView" src="themes/default/images/Search.gif" alt="quick_view_{$id}" onclick="DCMenu.showQuickView('{$module}', '{$id}');return false;">
+
+                            </div>
+
+                        <div class="gsLinkWrapper" >
+                            <a href="index.php?module={$module}&action=DetailView&record={$id}" class="gs_link">{$name}</a>
+                        </div>
+                        </div>
+                {/foreach}
+            </ul>
+        <div class="clear"></div>
+    </section>
+    {/foreach}
+    <a href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded}' class="resultAll">
+        {$appStrings.LNK_SEARCH_NONFTS_VIEW_ALL}
+    </a>
 {else}
-{$appStrings.LBL_EMAIL_SEARCH_NO_RESULTS}
+    <section class="resultNull">
+        <h1>{$appStrings.LBL_EMAIL_SEARCH_NO_RESULTS}</h1>
+        <div style="float:right;">
+            <a href="index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded}">{$appStrings.LNK_ADVANCED_SEARCH}</a>
+        </div>
+    </section>
 {/if}
-<p>
-<button onclick="document.location.href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded}'">{$appStrings.LBL_EMAIL_SHOW_READ}</button>
 </div>

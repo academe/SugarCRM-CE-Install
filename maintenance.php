@@ -35,7 +35,6 @@
  * "Powered by SugarCRM".
  ********************************************************************************/
 
-    print( "<html>" );
+    print( "<html><body>" );
     print( "Down for maintenance." );
-    print( "</html>" );
-?>
+    print( "</body></html>" );

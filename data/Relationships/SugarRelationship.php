@@ -71,7 +71,7 @@ abstract class SugarRelationship
      * @abstract
      * @param  $lhs SugarBean
      * @param  $rhs SugarBean
-     * @return void
+     * @return boolean
      */
     public abstract function remove($lhs, $rhs);
 
@@ -80,7 +80,7 @@ abstract class SugarRelationship
      * @param $link Link2 loads the rows for this relationship that match the given link
      * @return void
      */
-    public abstract function load($link);
+    public abstract function load($link, $params = array());
 
     /**
      * Gets the query to load a link.
@@ -115,12 +115,14 @@ abstract class SugarRelationship
 
     /**
      * @param  $link Link2 removes all the beans associated with this link from the relationship
-     * @return void
+     * @return boolean     true if all beans were successfully removed or there
+     *                     were not related beans, false otherwise
      */
     public function removeAll($link)
     {
         $focus = $link->getFocus();
         $related = $link->getBeans();
+        $result = true;
         foreach($related as $relBean)
         {
             if (empty($relBean->id)) {
@@ -128,10 +130,18 @@ abstract class SugarRelationship
             }
 
             if ($link->getSide() == REL_LHS)
-                $this->remove($focus, $relBean);
+            {
+                $sub_result = $this->remove($focus, $relBean);
+            }
             else
-                $this->remove($relBean, $focus);
+            {
+                $sub_result = $this->remove($relBean, $focus);
+            }
+
+            $result = $result && $sub_result;
         }
+
+        return $result;
     }
 
     /**
@@ -184,7 +194,7 @@ abstract class SugarRelationship
 
     /**
      * @param array $row values to be inserted into the relationship
-     * @return bool|void null if new row was inserted and true if an exesting row was updated
+     * @return bool|void null if new row was inserted and true if an existing row was updated
      */
     protected function addRow($row)
     {
@@ -197,9 +207,9 @@ abstract class SugarRelationship
         {
             $field = $def['name'];
             if (isset($row[$field]))
+            {
                 $values[$field] = "'{$row[$field]}'";
-            else
-                $values[$field] = "''";
+            }
         }
         $columns = implode(',', array_keys($values));
         $values = implode(',', $values);
@@ -334,6 +344,19 @@ abstract class SugarRelationship
     }
 
     /**
+     * Call the before add logic hook for a given link
+     * @param  SugarBean $focus base bean the hooks is triggered from
+     * @param  SugarBean $related bean being added/removed/updated from relationship
+     * @param string $link_name name of link being triggerd
+     * @return void
+     */
+    protected function callBeforeAdd($focus, $related, $link_name="")
+    {
+        $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related, $link_name);
+        $focus->call_custom_logic('before_relationship_add', $custom_logic_arguments);
+    }
+
+    /**
      * Call the after add logic hook for a given link
      * @param  SugarBean $focus base bean the hooks is triggered from
      * @param  SugarBean $related bean being added/removed/updated from relationship
@@ -352,10 +375,38 @@ abstract class SugarRelationship
      * @param string $link_name
      * @return void
      */
+    protected function callBeforeDelete($focus, $related, $link_name="")
+    {
+        $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related, $link_name);
+        $focus->call_custom_logic('before_relationship_delete', $custom_logic_arguments);
+    }
+
+    /**
+     * @param  SugarBean $focus
+     * @param  SugarBean $related
+     * @param string $link_name
+     * @return void
+     */
     protected function callAfterDelete($focus, $related, $link_name="")
     {
         $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related, $link_name);
         $focus->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
+    }
+
+    /**
+     * @param $optional_array clause to add to the where query when populating this relationship. It should be in the
+     * @param string $add_and
+     * @param string $prefix
+     * @return string
+     */
+    protected function getOptionalWhereClause($optional_array) {
+        //lhs_field, operator, and rhs_value must be set in optional_array
+        foreach(array("lhs_field", "operator", "rhs_value") as $required){
+            if (empty($optional_array[$required]))
+                return "";
+        }
+
+        return $optional_array['lhs_field']."".$optional_array['operator']."'".$optional_array['rhs_value']."'";
     }
 
     /**
@@ -390,6 +441,14 @@ abstract class SugarRelationship
                 if (empty($bean->deleted) && empty($bean->in_save))
                 {
                     $bean->save();
+                }
+                else
+                {
+                    // Bug 55942 save the in-save id which will be used to send workflow alert later
+                    if (isset($bean->id) && !empty($_SESSION['WORKFLOW_ALERTS']))
+                    {
+                        $_SESSION['WORKFLOW_ALERTS']['id'] = $bean->id;
+                    }
                 }
             }
         }

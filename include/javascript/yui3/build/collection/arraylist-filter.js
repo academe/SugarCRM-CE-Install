@@ -1,8 +1,8 @@
 /*
- Copyright (c) 2010, Yahoo! Inc. All rights reserved.
- Code licensed under the BSD License:
- http://developer.yahoo.com/yui/license.html
- version: 3.3.0
- build: 3167
- */
-YUI.add('arraylist-filter',function(Y){Y.mix(Y.ArrayList.prototype,{filter:function(validator){var items=[];Y.Array.each(this._items,function(item,i){item=this.item(i);if(validator(item)){items.push(item);}},this);return new this.constructor(items);}});},'3.3.0',{requires:['arraylist']});
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
+*/
+YUI.add("arraylist-filter",function(a){a.mix(a.ArrayList.prototype,{filter:function(c){var b=[];a.Array.each(this._items,function(e,d){e=this.item(d);if(c(e)){b.push(e);}},this);return new this.constructor(b);}});},"3.3.0",{requires:["arraylist"]});

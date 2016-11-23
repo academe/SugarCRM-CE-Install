@@ -1,11 +1,8 @@
 /*
- Copyright (c) 2010, Yahoo! Inc. All rights reserved.
- Code licensed under the BSD License:
- http://developer.yahoo.com/yui/license.html
- version: 3.3.0
- build: 3167
- */
-YUI.add('widget-htmlparser',function(Y){var Widget=Y.Widget,Node=Y.Node,Lang=Y.Lang,SRC_NODE="srcNode",CONTENT_BOX="contentBox";Widget.HTML_PARSER={};Widget._buildCfg={aggregates:["HTML_PARSER"]};Widget.ATTRS[SRC_NODE]={value:null,setter:Node.one,getter:"_getSrcNode",writeOnce:true};Y.mix(Widget.prototype,{_getSrcNode:function(val){return val||this.get(CONTENT_BOX);},_applyParsedConfig:function(node,cfg,parsedCfg){return(parsedCfg)?Y.mix(cfg,parsedCfg,false):cfg;},_applyParser:function(config){var widget=this,srcNode=widget.get(SRC_NODE),schema=widget._getHtmlParser(),parsedConfig,val;if(schema&&srcNode){Y.Object.each(schema,function(v,k,o){val=null;if(Lang.isFunction(v)){val=v.call(widget,srcNode);}else{if(Lang.isArray(v)){val=srcNode.all(v[0]);if(val.isEmpty()){val=null;}}else{val=srcNode.one(v);}}
-if(val!==null&&val!==undefined){parsedConfig=parsedConfig||{};parsedConfig[k]=val;}});}
-config=widget._applyParsedConfig(srcNode,config,parsedConfig);},_getHtmlParser:function(){var classes=this._getClasses(),parser={},i,p;for(i=classes.length-1;i>=0;i--){p=classes[i].HTML_PARSER;if(p){Y.mix(parser,p,true);}}
-return parser;}});},'3.3.0',{requires:['widget-base']});
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
+*/
+YUI.add("widget-htmlparser",function(f){var e=f.Widget,c=f.Node,d=f.Lang,a="srcNode",b="contentBox";e.HTML_PARSER={};e._buildCfg={aggregates:["HTML_PARSER"]};e.ATTRS[a]={value:null,setter:c.one,getter:"_getSrcNode",writeOnce:true};f.mix(e.prototype,{_getSrcNode:function(g){return g||this.get(b);},_applyParsedConfig:function(i,g,h){return(h)?f.mix(g,h,false):g;},_applyParser:function(g){var i=this,j=i.get(a),h=i._getHtmlParser(),l,k;if(h&&j){f.Object.each(h,function(n,m,p){k=null;if(d.isFunction(n)){k=n.call(i,j);}else{if(d.isArray(n)){k=j.all(n[0]);if(k.isEmpty()){k=null;}}else{k=j.one(n);}}if(k!==null&&k!==undefined){l=l||{};l[m]=k;}});}g=i._applyParsedConfig(j,g,l);},_getHtmlParser:function(){var h=this._getClasses(),k={},g,j;for(g=h.length-1;g>=0;g--){j=h[g].HTML_PARSER;if(j){f.mix(k,j,true);}}return k;}});},"3.3.0",{requires:["widget-base"]});

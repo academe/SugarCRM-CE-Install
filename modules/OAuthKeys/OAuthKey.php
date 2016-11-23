@@ -39,6 +39,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'Zend/Oauth/Provider.php';
 
+/**
+ * OAuth customer key
+ */
 class OAuthKey extends Basic
 {
 	public $module_dir = 'OAuthKeys';
@@ -54,6 +57,7 @@ class OAuthKey extends Basic
 	/**
 	 * Get record by consumer key
 	 * @param string $key
+	 * @return OAuthKey|false
 	 */
 	public function getByKey($key)
 	{
@@ -67,6 +71,7 @@ class OAuthKey extends Basic
 	/**
 	 * Fetch customer key by id
 	 * @param string $key
+	 * @return OAuthKey|false
 	 */
 	public static function fetchKey($key)
 	{
@@ -76,11 +81,16 @@ class OAuthKey extends Basic
 	    $k = new self();
 	    if($k->getByKey($key)) {
 	        self::$keys_cache[$key] = $k;
+	        BeanFactory::registerBean("OAuthKeys", $k);
 	        return $k;
 	    }
 	    return false;
 	}
 
+	/**
+	 * Delete the key
+	 * also removed all tokens
+	 */
 	public function mark_deleted($id)
 	{
 	    $this->db->query("DELETE from {$this->table_name} WHERE id='".$this->db->quote($id)."'");

@@ -71,7 +71,7 @@ class SubpanelQuickEdit{
 		$this->ev = new EditView();
 		$this->ev->view = $view;
 		$this->ev->ss = new Sugar_Smarty();
-		//$_REQUEST['return_action'] = 'SubPanelViewer';
+		$_REQUEST['return_action'] = 'SubPanelViewer';
 
 
 
@@ -106,13 +106,18 @@ class SubpanelQuickEdit{
 		if(file_exists($viewEditSource) && !$proccessOverride) {
             include($viewEditSource);
             $c = $module . 'ViewEdit';
+            
+            $customClass = 'Custom' . $c;
+            if(class_exists($customClass)) {
+                $c = $customClass;
+            }
 
             if(class_exists($c)) {
 	            $view = new $c;
 	            if($view->useForSubpanel) {
 	            	$this->defaultProcess = false;
 
-	            	//Check if we shold use the module's QuickCreate.tpl file
+	            	//Check if we should use the module's QuickCreate.tpl file.
 	            	if($view->useModuleQuickCreateTemplate && file_exists('modules/'.$module.'/tpls/QuickCreate.tpl')) {
 	            	   $this->ev->defs['templateMeta']['form']['headerTpl'] = 'modules/'.$module.'/tpls/QuickCreate.tpl';
 	            	}

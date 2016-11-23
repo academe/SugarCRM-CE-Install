@@ -43,6 +43,7 @@ require_once('include/export_utils.php');
 global $sugar_config;
 global $locale;
 global $current_user;
+global $app_list_strings;
 
 $the_module = clean_string($_REQUEST['module']);
 
@@ -52,12 +53,26 @@ if($sugar_config['disable_export'] 	|| (!empty($sugar_config['admin_export_only'
 	die($GLOBALS['app_strings']['ERR_EXPORT_DISABLED']);
 }
 
-if(!empty($_REQUEST['uid'])){
+//check to see if this is a request for a sample or for a regular export
+if(!empty($_REQUEST['sample'])){
+    //call special method that will create dummy data for bean as well as insert standard help message.
+    $content = exportSample(clean_string($_REQUEST['module']));
+
+}else if(!empty($_REQUEST['uid'])){
 	$content = export(clean_string($_REQUEST['module']), $_REQUEST['uid'], isset($_REQUEST['members']) ? $_REQUEST['members'] : false);
 }else{
 	$content = export(clean_string($_REQUEST['module']));
 }
 $filename = $_REQUEST['module'];
+//use label if one is defined
+if(!empty($app_list_strings['moduleList'][$_REQUEST['module']])){
+    $filename = $app_list_strings['moduleList'][$_REQUEST['module']];
+}
+
+//strip away any blank spaces
+$filename = str_replace(' ','',$filename);
+
+
 if($_REQUEST['members'] == true)
 	$filename .= '_'.'members';
 ///////////////////////////////////////////////////////////////////////////////

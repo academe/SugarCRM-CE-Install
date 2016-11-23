@@ -1,9 +1,8 @@
 /*
- Copyright (c) 2010, Yahoo! Inc. All rights reserved.
- Code licensed under the BSD License:
- http://developer.yahoo.com/yui/license.html
- version: 3.3.0
- build: 3167
- */
-YUI.add('datatable-datasource',function(Y){function DataTableDataSource(){DataTableDataSource.superclass.constructor.apply(this,arguments);}
-Y.mix(DataTableDataSource,{NS:"datasource",NAME:"dataTableDataSource",ATTRS:{datasource:{setter:"_setDataSource"},initialRequest:{setter:"_setInitialRequest"}}});Y.extend(DataTableDataSource,Y.Plugin.Base,{_setDataSource:function(ds){return ds||new Y.DataSource.Local(ds);},_setInitialRequest:function(request){},initializer:function(config){if(!Y.Lang.isUndefined(config.initialRequest)){this.load({request:config.initialRequest});}},load:function(config){config=config||{};config.request=config.request||this.get("initialRequest");config.callback=config.callback||{success:Y.bind(this.onDataReturnInitializeTable,this),failure:Y.bind(this.onDataReturnInitializeTable,this),argument:this.get("host").get("state")};var ds=(config.datasource||this.get("datasource"));if(ds){ds.sendRequest(config);}},onDataReturnInitializeTable:function(e){this.get("host").set("recordset",new Y.Recordset({records:e.response.results}));}});Y.namespace("Plugin").DataTableDataSource=DataTableDataSource;},'3.3.0',{requires:['datatable-base','plugin','datasource-local']});
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
+*/
+YUI.add("datatable-datasource",function(B){function A(){A.superclass.constructor.apply(this,arguments);}B.mix(A,{NS:"datasource",NAME:"dataTableDataSource",ATTRS:{datasource:{setter:"_setDataSource"},initialRequest:{setter:"_setInitialRequest"}}});B.extend(A,B.Plugin.Base,{_setDataSource:function(C){return C||new B.DataSource.Local(C);},_setInitialRequest:function(C){},initializer:function(C){if(!B.Lang.isUndefined(C.initialRequest)){this.load({request:C.initialRequest});}},load:function(C){C=C||{};C.request=C.request||this.get("initialRequest");C.callback=C.callback||{success:B.bind(this.onDataReturnInitializeTable,this),failure:B.bind(this.onDataReturnInitializeTable,this),argument:this.get("host").get("state")};var D=(C.datasource||this.get("datasource"));if(D){D.sendRequest(C);}},onDataReturnInitializeTable:function(C){this.get("host").set("recordset",new B.Recordset({records:C.response.results}));}});B.namespace("Plugin").DataTableDataSource=A;},"3.3.0",{requires:["datatable-base","plugin","datasource-local"]});

@@ -40,6 +40,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'Zend/Oauth/Provider.php';
 require_once 'modules/OAuthKeys/OAuthKey.php';
 
+/**
+ * OAuth token
+ */
 class OAuthToken extends SugarBean
 {
 	public $module_dir = 'OAuthTokens';
@@ -55,6 +58,7 @@ class OAuthToken extends SugarBean
     public $consumer;
     public $assigned_user_id;
     public $consumer_obj;
+    public $callback_url;
     // authdata is not preserved so far since we don't have any useful data yet
     // so it's an extension point for the future
     public $authdata;
@@ -85,6 +89,7 @@ class OAuthToken extends SugarBean
 	/**
 	 * Associate the token with the consumer key
 	 * @param OAuthKey $consumer
+	 * @return OAuthToken
 	 */
 	public function setConsumer($consumer)
 	{
@@ -94,6 +99,17 @@ class OAuthToken extends SugarBean
 	}
 
 	/**
+	 * Set callback URL for request token
+	 * @param string $url
+	 * @return OAuthToken
+	 */
+    public function setCallbackURL($url)
+    {
+        $this->callback_url = $url;
+        return $this;
+    }
+
+    /**
 	 * Generate random token
 	 * @return string
 	 */
@@ -135,8 +151,7 @@ class OAuthToken extends SugarBean
         if(empty($ltoken->id)) return null;
         $ltoken->token = $ltoken->id;
         if(!empty($ltoken->consumer)) {
-            $ltoken->consumer_obj = new OAuthKey();
-            $ltoken->consumer_obj->retrieve($ltoken->consumer);
+            $ltoken->consumer_obj = BeanFactory::getBean("OAuthKeys", $ltoken->consumer);
             if(empty($ltoken->consumer_obj->id)) {
                 return null;
             }
@@ -152,6 +167,23 @@ class OAuthToken extends SugarBean
 	    $this->setState(self::INVALID);
 	    $this->verify = false;
 	    return $this->save();
+	}
+
+	/**
+	 * Create a new authorized token for specific user
+	 * This bypasses normal OAuth process and creates a ready-made access token
+	 * @param OAuthKey $consumer
+	 * @param User $user
+	 * @return OAuthToken
+	 */
+	public static function createAuthorized($consumer, $user)
+	{
+	    $token = self::generate();
+	    $token->setConsumer($consumer);
+	    $token->setState(self::ACCESS);
+	    $token->assigned_user_id = $user->id;
+        $token->save();
+        return $token;
 	}
 
 	/**
@@ -231,10 +263,37 @@ class OAuthToken extends SugarBean
 	    return Zend_Oauth_Provider::OK;
 	}
 
+	/**
+	 * Delete token by ID
+	 * @param string id
+	 * @see SugarBean::mark_deleted($id)
+	 */
 	public function mark_deleted($id)
 	{
 	    $this->db->query("DELETE from {$this->table_name} WHERE id='".$this->db->quote($id)."'");
 	}
+
+	/**
+	 * Delete tokens by consumer ID
+	 * @param string $user
+	 */
+	public static function deleteByConsumer($consumer_id)
+	{
+	   global $db;
+	   $db->query("DELETE FROM oauth_tokens WHERE consumer='".$db->quote($consumer_id) ."'");
+	}
+
+	/**
+	 * Delete tokens by user ID
+	 * @param string $user
+	 */
+	public static function deleteByUser($user_id)
+	{
+	   global $db;
+	   $db->query("DELETE FROM oauth_tokens WHERE assigned_user_id='".$db->quote($user_id) ."'");
+	}
+
+
 }
 
 function displayDateFromTs($focus, $field, $value, $view='ListView')

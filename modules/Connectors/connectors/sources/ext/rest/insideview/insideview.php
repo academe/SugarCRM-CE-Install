@@ -41,6 +41,9 @@ require_once('include/connectors/sources/ext/rest/rest.php');
 class ext_rest_insideview extends ext_rest {
 	protected $_enable_in_wizard = false;
 	protected $_enable_in_hover = false;
+    protected $_enable_in_admin_properties = false;
+    protected $_enable_in_admin_mapping = false;
+    protected $_enable_in_admin_search = false;
 	protected $_has_testing_enabled = false;
 
     protected $orgId;
@@ -50,7 +53,11 @@ class ext_rest_insideview extends ext_rest {
     
     public function __construct() {
         
-        $this->allowedModuleList = array('Accounts' => 'Accounts', 'Contacts' => 'Contacts', 'Opportunities' => 'Opportunities', 'Leads' => 'Leads');
+        global $app_list_strings;
+        $this->allowedModuleList = array('Accounts' => $app_list_strings['moduleList']['Accounts'],
+                                         'Contacts' => $app_list_strings['moduleList']['Contacts'],
+                                         'Opportunities' => $app_list_strings['moduleList']['Opportunities'],
+                                         'Leads' => $app_list_strings['moduleList']['Leads']);
 
         parent::__construct();
     }
@@ -68,14 +75,12 @@ class ext_rest_insideview extends ext_rest {
         return $outModuleList;
     }
 
-    // InsideView currently has no web service to control field mappings
-    public function getMapping() {
-        return;
-    }
-
     public function saveMappingHook($mapping) {
 
-        $removeList = $this->allowedModuleList;
+        $removeList = array();
+        foreach ($this->allowedModuleList as $module_name=>$display_name) {
+            $removeList[$module_name] = $module_name;
+        }
 
         if ( is_array($mapping['beans']) ) {
             foreach($mapping['beans'] as $module => $ignore) {

@@ -1,10 +1,8 @@
 /*
- Copyright (c) 2010, Yahoo! Inc. All rights reserved.
- Code licensed under the BSD License:
- http://developer.yahoo.com/yui/license.html
- version: 3.3.0
- build: 3167
- */
-YUI.add('history-hash-ie',function(Y){if(Y.UA.ie&&!Y.HistoryBase.nativeHashChange){var Do=Y.Do,GlobalEnv=YUI.namespace('Env.HistoryHash'),HistoryHash=Y.HistoryHash,iframe=GlobalEnv._iframe,win=Y.config.win,location=win.location,lastUrlHash='';HistoryHash.getIframeHash=function(){if(!iframe||!iframe.contentWindow){return'';}
-var prefix=HistoryHash.hashPrefix,hash=iframe.contentWindow.location.hash.substr(1);return prefix&&hash.indexOf(prefix)===0?hash.replace(prefix,''):hash;};HistoryHash._updateIframe=function(hash,replace){var iframeDoc=iframe&&iframe.contentWindow&&iframe.contentWindow.document,iframeLocation=iframeDoc&&iframeDoc.location;if(!iframeDoc||!iframeLocation){return;}
-iframeDoc.open().close();if(replace){iframeLocation.replace(hash.charAt(0)==='#'?hash:'#'+hash);}else{iframeLocation.hash=hash;}};Do.after(HistoryHash._updateIframe,HistoryHash,'replaceHash',HistoryHash,true);if(!iframe){Y.on('domready',function(){iframe=GlobalEnv._iframe=Y.Node.getDOMNode(Y.Node.create('<iframe src="javascript:0" style="display:none" height="0" width="0" tabindex="-1" title="empty"/>'));Y.config.doc.documentElement.appendChild(iframe);HistoryHash._updateIframe(HistoryHash.getHash()||'#');Y.on('hashchange',function(e){lastUrlHash=e.newHash;if(HistoryHash.getIframeHash()!==lastUrlHash){HistoryHash._updateIframe(lastUrlHash);}},win);Y.later(50,null,function(){var iframeHash=HistoryHash.getIframeHash();if(iframeHash!==lastUrlHash){HistoryHash.setHash(iframeHash);}},null,true);});}}},'3.3.0',{requires:['history-hash','node-base']});
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
+*/
+YUI.add("history-hash-ie",function(H){if(H.UA.ie&&!H.HistoryBase.nativeHashChange){var C=H.Do,D=YUI.namespace("Env.HistoryHash"),B=H.HistoryHash,E=D._iframe,G=H.config.win,A=G.location,F="";B.getIframeHash=function(){if(!E||!E.contentWindow){return"";}var I=B.hashPrefix,J=E.contentWindow.location.hash.substr(1);return I&&J.indexOf(I)===0?J.replace(I,""):J;};B._updateIframe=function(J,I){var K=E&&E.contentWindow&&E.contentWindow.document,L=K&&K.location;if(!K||!L){return;}K.open().close();if(I){L.replace(J.charAt(0)==="#"?J:"#"+J);}else{L.hash=J;}};C.after(B._updateIframe,B,"replaceHash",B,true);if(!E){H.on("domready",function(){E=D._iframe=H.Node.getDOMNode(H.Node.create('<iframe src="javascript:0" style="display:none" height="0" width="0" tabindex="-1" title="empty"/>'));H.config.doc.documentElement.appendChild(E);B._updateIframe(B.getHash()||"#");H.on("hashchange",function(I){F=I.newHash;if(B.getIframeHash()!==F){B._updateIframe(F);}},G);H.later(50,null,function(){var I=B.getIframeHash();if(I!==F){B.setHash(I);}},null,true);});}}},"3.3.0",{requires:["history-hash","node-base"]});

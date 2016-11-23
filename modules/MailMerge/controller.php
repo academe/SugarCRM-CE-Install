@@ -51,6 +51,7 @@ class MailMergeController extends SugarController{
         $term = !empty($_REQUEST['term']) ? $GLOBALS['db']->quote($_REQUEST['term']) : '';
         //in the case of Campaigns we need to use the related module
         $relModule = !empty($_REQUEST['rel_module']) ? $_REQUEST['rel_module'] : null;
+
         $max = !empty($_REQUEST['max']) ? $_REQUEST['max'] : 10;
         $order_by = !empty($_REQUEST['order_by']) ? $_REQUEST['order_by'] : $lmodule.".name";
         $offset = !empty($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
@@ -68,30 +69,31 @@ class MailMergeController extends SugarController{
                     $where = $lmodule.".first_name like '%".$term."%' OR ".$lmodule.".last_name like '%".$term."%'";
                     $order_by = $lmodule.".last_name";
                 }
-                else if($module == 'CampaignProspects'){
-                    $using_cp = true;
-                    $lmodule = strtolower($relModule);
-                    $campign_where = $_SESSION['MAILMERGE_WHERE'];
-                    $where = $lmodule.".first_name like '%".$term."%' OR ".$lmodule.".last_name like '%".$term."%'";
-                    if($campign_where)
-                        $where .= " AND ".$campign_where ;
-                    $where .= " AND related_type = #".$lmodule."#";
-                    $module = 'Prospects';
-                }
                 else
                 {
                     $where = $lmodule.".name like '".$term."%'";
                 }
             }
 
-            $seed = SugarModule::get($module)->loadBean();
+            if($module == 'CampaignProspects'){
+                    $using_cp = true;
+                    $module = 'Prospects';
+                    $lmodule = strtolower($relModule);
+                    $campign_where = $_SESSION['MAILMERGE_WHERE'];
+                    $where = $lmodule.".first_name like '%".$term."%' OR ".$lmodule.".last_name like '%".$term."%'";
+                    if($campign_where)
+                        $where .= " AND ".$campign_where ;
+                    $where .= " AND related_type = #".$lmodule."#";
+            }
 
+            $seed = SugarModule::get($module)->loadBean();
 
             if($using_cp){
                 $fields = array('id', 'first_name', 'last_name');
-               $dataList = $seed->retrieveTargetList($where, $fields, $offset,-1,$max,$deleted);
+                $dataList = $seed->retrieveTargetList($where, $fields, $offset,-1,$max,$deleted);
+
             }else{
-              $dataList = $seed->get_list($order_by, $where, $offset,-1,$max,$deleted);
+                $dataList = $seed->get_list($order_by, $where, $offset,-1,$max,$deleted);
             }
 
             $list = $dataList['list'];

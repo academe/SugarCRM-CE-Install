@@ -166,15 +166,63 @@ var $useForSubpanel = true;
         if ( isset($this->fieldHelper->usertype) && ($this->fieldHelper->usertype == 'GROUP'
             )) {
             $this->ev->formName = 'EditViewGroup';
-            
+
             $processSpecial = true;
-            $processFormName = 'EditViewGroup';            
+            $processFormName = 'EditViewGroup';
         }
 
+        //Bug#51609 Replace {php} code block in EditViewHeader.tpl
+        $action_button = array();
+        $APP = $this->ss->get_template_vars('APP');
+        $PWDSETTINGS = $this->ss->get_template_vars('PWDSETTINGS');
+        $REGEX = $this->ss->get_template_vars('REGEX');
+        $CHOOSER_SCRIPT = $this->ss->get_template_vars('CHOOSER_SCRIPT');
+        $REASSIGN_JS = $this->ss->get_template_vars('REASSIGN_JS');
+        $RETURN_ACTION = $this->ss->get_template_vars('RETURN_ACTION');
+        $RETURN_MODULE = $this->ss->get_template_vars('RETURN_MODULE');
+        $RETURN_ID = $this->ss->get_template_vars('RETURN_ID');
+
+        $minpwdlength = !empty($PWDSETTINGS['minpwdlength']) ? $PWDSETTINGS['minpwdlength'] : '';
+        $maxpwdlength =  !empty($PWDSETTINGS['maxpwdlength']) ? $PWDSETTINGS['maxpwdlength'] : '';
+        $action_button_header[] = <<<EOD
+                    <input type="button" id="SAVE_HEADER" title="{$APP['LBL_SAVE_BUTTON_TITLE']}" accessKey="{$APP['LBL_SAVE_BUTTON_KEY']}"
+                          class="button primary" onclick="var _form = $('#EditView')[0]; if (!set_password(_form,newrules('{$minpwdlength}','{$maxpwdlength}','{$REGEX}'))) return false; if (!Admin_check()) return false; _form.action.value='Save'; {$CHOOSER_SCRIPT} {$REASSIGN_JS} if(verify_data(EditView)) _form.submit();"
+                          name="button" value="{$APP['LBL_SAVE_BUTTON_LABEL']}">
+EOD
+        ;
+        $action_button_header[] = <<<EOD
+                    <input	title="{$APP['LBL_CANCEL_BUTTON_TITLE']}" id="CANCEL_HEADER" accessKey="{$APP['LBL_CANCEL_BUTTON_KEY']}"
+                              class="button" onclick="var _form = $('#EditView')[0]; _form.action.value='{$RETURN_ACTION}'; _form.module.value='{$RETURN_MODULE}'; _form.record.value='{$RETURN_ID}'; _form.submit()"
+                              type="button" name="button" value="{$APP['LBL_CANCEL_BUTTON_LABEL']}">
+EOD
+        ;
+        $action_button_header = array_merge($action_button_header, $this->ss->get_template_vars('BUTTONS_HEADER'));
+        $this->ss->assign('ACTION_BUTTON_HEADER', $action_button_header);
+
+        $action_button_footer[] = <<<EOD
+                    <input type="button" id="SAVE_FOOTER" title="{$APP['LBL_SAVE_BUTTON_TITLE']}" accessKey="{$APP['LBL_SAVE_BUTTON_KEY']}"
+                          class="button primary" onclick="var _form = $('#EditView')[0]; if (!set_password(_form,newrules('{$minpwdlength}','{$maxpwdlength}','{$REGEX}'))) return false; if (!Admin_check()) return false; _form.action.value='Save'; {$CHOOSER_SCRIPT} {$REASSIGN_JS} if(verify_data(EditView)) _form.submit();"
+                          name="button" value="{$APP['LBL_SAVE_BUTTON_LABEL']}">
+EOD
+        ;
+        $action_button_footer[] = <<<EOD
+                    <input	title="{$APP['LBL_CANCEL_BUTTON_TITLE']}" id="CANCEL_FOOTER" accessKey="{$APP['LBL_CANCEL_BUTTON_KEY']}"
+                              class="button" onclick="var _form = $('#EditView')[0]; _form.action.value='{$RETURN_ACTION}'; _form.module.value='{$RETURN_MODULE}'; _form.record.value='{$RETURN_ID}'; _form.submit()"
+                              type="button" name="button" value="{$APP['LBL_CANCEL_BUTTON_LABEL']}">
+EOD
+        ;
+        $action_button_footer = array_merge($action_button_footer, $this->ss->get_template_vars('BUTTONS_FOOTER'));
+        $this->ss->assign('ACTION_BUTTON_FOOTER', $action_button_footer);
+
+        //if the request object has 'scrolltocal' set, then we are coming here from the tour window box and need to set flag to true
+        // so that footer.tpl fires off script to scroll to calendar section
+        if(!empty($_REQUEST['scrollToCal'])){
+            $this->ss->assign('scroll_to_cal', true);
+        }
         $this->ev->process($processSpecial,$processFormName);
 
 		echo $this->ev->display($this->showTitle);
-        
+
     }
 
 

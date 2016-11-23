@@ -142,6 +142,9 @@ function json_query($request_id, $params) {
 		$list_arr[$i]['module']= $list_return[$i]->object_name;
 
 		foreach($args['field_list'] as $field) {
+		    if(!empty($list_return[$i]->field_name_map[$field]['sensitive'])) {
+		        continue;
+		    }
 			// handle enums
 			if(	(isset($list_return[$i]->field_name_map[$field]['type']) && $list_return[$i]->field_name_map[$field]['type'] == 'enum') ||
 				(isset($list_return[$i]->field_name_map[$field]['custom_type']) && $list_return[$i]->field_name_map[$field]['custom_type'] == 'enum')) {
@@ -189,7 +192,7 @@ function populateBean(&$focus) {
 
 	foreach($all_fields as $field)
 	{
-		if(isset($focus->$field))
+		if(isset($focus->$field) && !is_object($focus->$field))
 		{
 			$focus->$field =	from_html($focus->$field);
 			$focus->$field =	preg_replace("/\r\n/","<BR>",$focus->$field);
@@ -197,7 +200,7 @@ function populateBean(&$focus) {
 			$module_arr['fields'][$field] = $focus->$field;
 		}
 	}
-$GLOBALS['log']->debug("JSON_SERVER:populate bean:");
+	$GLOBALS['log']->debug("JSON_SERVER:populate bean:");
 	return $module_arr;
 }
 
@@ -236,7 +239,8 @@ function authenticate() {
 	return $result;
 }
 
-function construct_where(&$query_obj, $table='',$module=null) {
+function construct_where(&$query_obj, $table='',$module=null)
+{
 	if(! empty($table)) {
 		$table .= ".";
 	}
@@ -247,7 +251,9 @@ function construct_where(&$query_obj, $table='',$module=null) {
 	}
 
 	foreach($query_obj['conditions'] as $condition) {
-
+        if($condition['name'] == 'user_hash') {
+            continue;
+        }
 		if ($condition['name']=='email1' or $condition['name']=='email2') {
 
 			$email1_value=strtoupper($condition['value']);
@@ -259,16 +265,16 @@ function construct_where(&$query_obj, $table='',$module=null) {
 		}
 		else {
 			if($condition['op'] == 'contains') {
-				$cond_arr[] = $table.getValidDBName($condition['name'])." like '%".$GLOBALS['db']->quote($condition['value'])."%'";
+				$cond_arr[] = $table.$GLOBALS['db']->getValidDBName($condition['name'])." like '%".$GLOBALS['db']->quote($condition['value'])."%'";
 			}
 			if($condition['op'] == 'like_custom') {
 				$like = '';
 				if(!empty($condition['begin'])) $like .= $GLOBALS['db']->quote($condition['begin']);
 				$like .= $GLOBALS['db']->quote($condition['value']);
 				if(!empty($condition['end'])) $like .= $GLOBALS['db']->quote($condition['end']);
-				$cond_arr[] = $table.getValidDBName($condition['name'])." like '$like'";
+				$cond_arr[] = $table.$GLOBALS['db']->getValidDBName($condition['name'])." like '$like'";
 			} else { // starts_with
-				$cond_arr[] = $table.getValidDBName($condition['name'])." like '".$GLOBALS['db']->quote($condition['value'])."%'";
+				$cond_arr[] = $table.$GLOBALS['db']->getValidDBName($condition['name'])." like '".$GLOBALS['db']->quote($condition['value'])."%'";
 			}
 		}
 	}
@@ -276,8 +282,12 @@ function construct_where(&$query_obj, $table='',$module=null) {
 	if($table == 'users.') {
 		$cond_arr[] = $table."status='Active'";
 	}
+	$group = strtolower(trim($query_obj['group']));
+	if($group != "and" && $group != "or") {
+	    $group = "and";
+	}
 
-	return implode(" {$query_obj['group']} ",$cond_arr);
+	return implode(" $group ",$cond_arr);
 }
 
 ////	END UTILS
@@ -287,7 +297,7 @@ function construct_where(&$query_obj, $table='',$module=null) {
 ///////////////////////////////////////////////////////////////////////////////
 ////	JSON SERVER HANDLER LOGIC
 //ignore notices
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 ob_start();
 insert_charset_header();
 global $sugar_config;

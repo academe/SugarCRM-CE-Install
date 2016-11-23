@@ -37,97 +37,140 @@
 *}
 <script type="text/javascript">
 function allowInsideView() {ldelim}
-document.getElementById('insideViewFrame').src = '{$AJAX_URL}';
+
+document.getElementById('insideViewFrame').src = "{$AJAX_URL}";
 document.getElementById('insideViewConfirm').style.display = 'none';
 document.getElementById('insideViewFrame').style.display = 'block';
-document.getElementById('insideViewDiv').style.height='430px';
 YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallConnectorFunc&source_id=ext_rest_insideview&source_func=allowInsideView', {ldelim}{rdelim}, null);
 {rdelim}
-    YAHOO.util.Event.onDOMReady(function(){ldelim}
-        markSubPanelLoaded('insideview');
-        var insideViewSubPanel = document.getElementById("subpanel_insideview" );
-        insideViewSubPanel.cookie_name="insideview_v";
-        if(div_cookies['insideview_v']){ldelim}
-            if(div_cookies['insideview_v'] == 'none')
+SUGAR.util.doWhen("typeof(markSubPanelLoaded) != 'undefined' && document.getElementById('subpanel_insideview')", function() {ldelim}
+	markSubPanelLoaded('insideview');
+	var insideViewSubPanel = document.getElementById("subpanel_insideview" );
+	insideViewSubPanel.cookie_name="insideview_v";
+	if(div_cookies['insideview_v']){ldelim}
+		if(div_cookies['insideview_v'] == 'none')
+		{ldelim}
+            hideInsideViewSubPanel();
+		{rdelim}
+	{rdelim}
+    else
+    {ldelim}
+        if(typeof(DCMenu) == 'undefined')
+            return;
+        var cookieKey = DCMenu.module + '_divs';
+        var tmpCookie = Get_Cookie(cookieKey);
+        if(tmpCookie)
+        {ldelim}
+            var subCookies = tmpCookie.split('#');
+            var foundInsideViewCookie = false;
+            for(var x=0;x<subCookies.length;x++ )
             {ldelim}
-                hideSubPanel('insideview');
-                document.getElementById('hide_link_insideview').style.display='none';
-                document.getElementById('show_link_insideview').style.display='';
+                var subCookie = subCookies[x];
+                var pars = subCookie.split('=');
+                if(pars.length == 2)
+                {ldelim}
+                    if(pars[0] == 'insideview_v')
+                        foundInsideViewCookie = true;
+                {rdelim}
+            {rdelim}
+            if(!foundInsideViewCookie)
+            {ldelim}
+                hideInsideViewSubPanel()
             {rdelim}
         {rdelim}
-        toggleGettingStartedButton();
-    {rdelim});
-
-    function toggleGettingStartedButton(){ldelim}
-        var acceptBox  = document.getElementById( "insideview_accept_box" );
-        var gettingStartedButton  = document.getElementById( "insideview_accept_button" );
-
-        if( acceptBox.checked ){ldelim}
-            gettingStartedButton.disabled = '';
-            gettingStartedButton.focus();
+        else
+        {ldelim}
+            hideInsideViewSubPanel();
         {rdelim}
-        else {ldelim}
-            gettingStartedButton.disabled = "disabled";
-        {rdelim}
+
     {rdelim}
+
+	toggleGettingStartedButton();
+{rdelim});
+
+function hideInsideViewSubPanel(){ldelim}
+    hideSubPanel('insideview');
+    document.getElementById('hide_link_insideview').style.display='none';
+    document.getElementById('show_link_insideview').style.display='';
+{rdelim}
+
+function toggleGettingStartedButton(){ldelim}
+	var acceptBox  = document.getElementById( "insideview_accept_box" );
+	var gettingStartedButton  = document.getElementById( "insideview_accept_button" );
+
+	if( acceptBox.checked ){ldelim}
+		gettingStartedButton.disabled = '';
+		gettingStartedButton.focus();
+	{rdelim}
+	else {ldelim}
+		gettingStartedButton.disabled = "disabled";
+	{rdelim}
+{rdelim}
 </script>
 <div id='insideViewDiv' style='width:100%' class="doNotPrint">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" class="formHeader h3Row">
         <tbody>
             <tr>
-                <td nowrap="" style="padding: 0px;">
+                <td nowrap="">
                     <h3>
-                        <span>
-                            <a name="insideview"> </a>
-                            <span id="show_link_insideview" style="display: none">
-                                <a href="#" onclick="current_child_field = 'insideview';showSubPanel('insideview',null,null,'insideview');document.getElementById('show_link_insideview').style.display='none';document.getElementById('hide_link_insideview').style.display='';return false;"><img src="{$logo_collapsed}" border="0"></a>
-                            </span>
-                            <span id="hide_link_insideview" style="display: ">
-                                <a href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="{$logo_expanded}" border="0"></a>
-                            </span>
-                        </span>
+                        <span>InsideView</span>
                     </h3>
                 </td>
-                <td width="100%">
-                    <img height="1" width="1" src="{sugar_getimagepath file='blank.gif'}" alt="">
+                <td width="20">
+                    <img height="1" width="20" src="{sugar_getimagepath file='blank.gif'}" alt="">
+                </td>
+                <td width="100%" valign="middle" nowrap="">
+                    <a name="insideview"> </a>
+                    <span id="show_link_insideview" style="display: none">
+                        <a class="utilsLink" href="#" onclick="current_child_field = 'insideview';markSubPanelLoaded('insideview');showSubPanel('insideview',null,null,'insideview');document.getElementById('show_link_insideview').style.display='none';document.getElementById('hide_link_insideview').style.display='';return false;">{sugar_getimage name='advanced_search' attr='border="0" align="absmiddle"' ext='.gif' alt=$APP.LBL_SHOW }</a>
+                    </span>
+                    <span id="hide_link_insideview" style="display: ">
+                        <a class="utilsLink" href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;">{sugar_getimage name='basic_search' attr='border="0" align="absmiddle"' ext='.gif' alt=$APP.LBL_HIDE }</a>
+                    </span>
                 </td>
             </tr>
         </tbody>
     </table>
   <div id='subpanel_insideview' style='width:100%' {if !$showInsideView}align="center"{/if}>
-      <div id='insideViewConfirm' class="detail view" style="padding: 20px; width: 700px; text-align: left; position: relative;{if $showInsideView}display:none;{/if}">
-      
-      <a href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="{$close}" border="0" style='position: absolute; top: -8px; right: -9px;'></a>
-      
-      
-      <div style="font-size: 14px;">
-      	<a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none; font-size: 14px;'><strong style='color: #d71e00;'>{$connector_language.LBL_TAGLINK}</strong></a> <strong>{$connector_language.LBL_TAGLINE}</strong>
+      <div id='insideViewConfirm' class="detail view" style="width: 100%; text-align: left; position: relative;{if $showInsideView}display:none;{/if}">
+          <a href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"></a>
+          <div style="width: 100%; float: left; padding: 10px 0px 20px 0pt;">
+            <a target="_blank"  href="http://community.insideview.com/t5/Getting-Started/Find-Opportunities-to-Reach-Out-to-Customers/ta-p/1133"  style="float: left; width: 230px;display:block;text-decoration:none;">
+                <img title="{$connector_language.LBL_OPP}" src="https://my.insideview.com/iv/common/ruby/images/sugarembed-img1.png" style="float: left;border:0 solid;">
+                <div  style="float: left; padding-top: 11px; width: 150px;">
+                    <span style="color: #990000; float: left; font-family: arial; font-size: 14px; font-weight: bold;">{$connector_language.LBL_OPP}</span>
+                    <span style="font-size: 10px; font-weight: bold; font-family: arial; color: #333333;float: left;">{$connector_language.LBL_OPP_SUB}</span>
+                </div>
+            </a>
+            <a target="_blank"  href="http://community.insideview.com/t5/Getting-Started/Get-Referrals-to-Key-Decision-Makers/ta-p/1141"  style="float: left; width: 230px;display:block;text-decoration:none;">
+                <img title="{$connector_language.LBL_REFERRAL}" src="https://my.insideview.com/iv/common/ruby/images/sugarembed-img2.png" style="float: left;border:0 solid;">
+                <div style="float: left; padding-top: 11px; padding-left: 10px;width: 150px;">
+                    <span style="color: #990000; float: left; font-family: arial; font-size: 14px; font-weight: bold;">{$connector_language.LBL_REFERRAL}</span>
+                    <span style="font-size: 10px; font-weight: bold; font-family: arial; color: #333333;float: left;">{$connector_language.LBL_REFERRAL_SUB}</span>
+                </div>
+            </a>
+            <a  target="_blank"  href="http://community.insideview.com/t5/Getting-Started/Engage-Prospects-and-Customers/ta-p/1127" style="float: left; width: 230px;display:block;text-decoration:none;">
+                <img title="{$connector_language.LBL_ENGAGE}" src="https://my.insideview.com/iv/common/ruby/images/sugarembed-img3.png" style="float: left;border:0 solid;">
+                <div style="float: left; padding-top: 11px; padding-left: 10px;width: 140px;">
+                    <span style="color: #990000; float: left; font-family: arial; font-size: 14px; font-weight: bold;">{$connector_language.LBL_ENGAGE}</span>
+                    <span style="font-size: 10px; font-weight: bold; font-family: arial; color: #333333;float: left;">{$connector_language.LBL_ENGAGE_SUB}</span>
+                </div>
+            </a>
+          </div>
+          <hr style="border-color: rgb(238, 238, 238); background-color: rgb(238, 238, 238); width: 100%;">
+          <form>
+              <input type="checkbox" class="checkbox" name="insideview_accept_box" id="insideview_accept_box" style="display: none;" onclick="toggleGettingStartedButton();">
+              <div style="float:left;padding:0 0 10px 0">
+                    <div style="font-size: 11px; float:left;margin: 5px 15px 0px 150px;">
+                        {$connector_language.iv_description0}&nbsp;<a href="http://www.insideview.com/cat-terms-use.html" target="_blank" style="color:#0099CC;text-decoration: none; font-size: 11px;">{$connector_language.LBL_TOS1}</a>&nbsp;and&nbsp;<a style="color:#0099CC;text-decoration: none; font-size: 11px;" target="_blank" href="http://www.insideview.com/cat-privacy.html">{$connector_language.LBL_TOS3}</a>.
+                    </div>
+                    <div onclick="allowInsideView(); return false;" name="insideview_accept_button" id="insideview_accept_button" style="float:right;height: 30px; background-image: url('https://my.insideview.com/iv/common/ruby/images/sugarembed-button.png');font-weight: bold; width: 113px; font-size: 14px;cursor:pointer;">
+                        <div style="float:left;margin:7px 0 0 18px;color:#ffffff;">{$connector_language.LBL_GET_STARTED}</div>
+                    </div>
+              </div>
+          </form>
+          <div class="clear"></div>
       </div>
-      
-   
-      
-      
-	<div style="float: left; padding-bottom: 10px; font-size: 13px; padding-right: 20px; padding-top: 10px;">
-      
-
-
-        {$connector_language.iv_description0}<br>{$connector_language.iv_description1}<strong>{$connector_language.iv_description2}</strong>{$connector_language.iv_description3}<br/>{$connector_language.iv_description4}
-
-       
-      </div>
-      
-      
-         <div style="float: right; padding-bottom: 10px; width: 190px;"><a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none;'><img style="margin-right: 10px; border-radius: 6px 6px 6px 6px; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px;" src="{$video}" align="left"/></a><a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none; position: relative; top: 15px;'>{$connector_language.LBL_VID0}<br>{$connector_language.LBL_VID1}</a></div>
-      
-               <hr style="width: 775px; border-color: #eee; background-color: #eee;">
-     <form>
-     <input type="checkbox" class="checkbox" name="insideview_accept_box" id="insideview_accept_box" onClick='toggleGettingStartedButton();'/>&nbsp;{$connector_language.LBL_TOS0}<a href='http://www.insideview.com/cat-terms-use.html' target='_blank' style='text-decoration: none;'>{$connector_language.LBL_TOS1}</a>{$connector_language.LBL_TOS2}<a href='http://www.insideview.com/cat-privacy.html' target='_blank' style='text-decoration: none;'>{$connector_language.LBL_TOS3}</a>.
-         <button name="insideview_accept_button" id="insideview_accept_button" onclick="allowInsideView(); return false;" class='button primary' style='height: 25px; float: right; border: 1px solid #821200; background-color: #eeeeee; background-image: none; text-shadow: 1px 1px #FFFFFF; color: #222; margin-bottom: 0px; background-image: -moz-linear-gradient(center top , #F9F9F9 0%, #F2F2F2 50%, #F1F1F1 50%, #DDDDDD 100%); background-image: -webkit-gradient( linear,left top,left bottom,color-stop(0, #f9f9f9),color-stop(.5, #F2F2F2),color-stop(.5, #F1F1F1),color-stop(1, #DDDDDD)); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f9f9f9", endColorstr="#DDDDDD");'>{$connector_language.LBL_GET_STARTED}</button>
-          
-     </form>
-      <div class="clear"></div>
-      
-      </div>
-      <iframe id='insideViewFrame' src='{$URL}' scrolling="no" style='border:0px; width:100%;height:400px;overflow:hidden;{if !$showInsideView}display:none;{else}display:block;{/if}'></iframe>
+      <iframe id='insideViewFrame' src='{$URL}' title='{$URL}' scrolling="no" style='border:0px; width:100%;height:400px;overflow:hidden;{if !$showInsideView}display:none;{else}display:block;{/if}'></iframe>
    </div>
 </div>

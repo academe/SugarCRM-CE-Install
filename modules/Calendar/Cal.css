@@ -36,8 +36,7 @@
  
 #cal-grid {
 	border-left: 1px solid silver;	 
-	width: 100%; 
-	overflow:hidden;
+	overflow: hidden;	
 }
 
 #cal-scrollable {
@@ -45,21 +44,20 @@
 	overflow-x: hidden;
 }
 
-#cal-grid .day_col {
+#cal-grid .col {
 	width: 14.2%; 
 	float: left; 
 	border-bottom: 0px solid silver;
 }
-#cal-grid .left_time_col {
+
+#cal-grid .left_col {
 	width: 52px; 
 	float: left; 
 	border-bottom: 0px solid silver;
 }
 
-#cal-grid .week_block {
-	width: auto;
-	margin-left: 52px;
-	min-width: 290px;
+#cal-grid .week {
+	float: left;
 }
 
 #cal-grid .slot {
@@ -72,7 +70,7 @@
 	background-color: #D1DCFF;
 }
 
-#cal-grid .left_cell {	
+#cal-grid .left_slot {	
 	height: 14px;
 	font-size: 10px;
 	text-align: center;	
@@ -81,32 +79,42 @@
 	vertical-align: middle;
 	line-height: 15px;	
 }
-#cal-grid .day_head {
-	height: 14px;		
+
+#cal-grid .col_head {
+	height: 14px;	
 	text-align: center;
 	font-size: 13px;
 	border-bottom: 1px solid silver;
 	border-top: 1px solid silver;
 	border-right: 1px solid silver;	
-	white-space: nowrap;
+	white-space: nowrap;	
 }
-#cal-grid .day_head a {
-	text-decoration: none;	
+
+#cal-grid .col_head a {
+	text-decoration: none;
 }
+
 #cal-grid .odd {
 	background-color: transparent;
 }
+
 #cal-grid .odd_border {
 	border-bottom: 1px solid silver;
 }
 
-#cal-grid .slot_active {
+#cal-grid div.slot_active {
 	background-color: gray;
 }
 	
 #cal-grid .today {
 	font-weight: bold;
 	background-color: #FCD372;
+}
+
+#cal-grid .cal-basic .basic_slot, #cal-grid .cal-basic .left_basic_slot {
+	border-bottom: 1px solid silver;
+	border-right: 1px solid silver;
+	white-space: nowrap;
 }
 
 .act_item {
@@ -126,7 +134,7 @@
 	border-color: transparent;
 }
 
-.act_item, #cal-grid .day_col {
+.act_item, #cal-grid .col {
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: -moz-none;
@@ -137,47 +145,67 @@
 .act_item .head {
 	height: 13px;
 	padding-left: 2px;
+	overflow: hidden;
 }
 .act_item .head div {
 	overflow: hidden;
-	height: 13px;	
 }
-.act_item .contain {
+.act_item .content {
 	padding-top: 1px;
 	padding-left: 2px;
 	padding-right: 2px;
 	overflow: hidden;
 	height: 13px;	
+	padding-top: 1px;
+	font-size: 11px;
 }
 
-.act_item .adicon {
+.adicon {
 	float: right;	
 	color: black;
-	width: 11px;
+	width: 10px;
 	font-size: 9px;
-	height: 11px;
+	height: 12px;
 	line-height: 11px;
 	text-align: center;
-	background-image: url('../../themes/default/images/MoreDetail.png');
+	background-image: url(../../index.php?entryPoint=getImage&imageName=calendar_info.png);
 	background-repeat: no-repeat;
+	margin-top: 1px;
+	cursor: pointer;
 }
 
-.act_item .head {
-	font-size: 10px;	
+.act_item .head div {
+	font-size: 11px;	
+}
+
+
+.act_item .head .start_time {
 	font-weight: bold;
 }
-.act_item .head div {
-	font-weight: bold;	
-	font-size: 10px;
-}
+
 .act_item .head a, .act_item .head a:visited, .act_item .head a:hover {
 	text-decoration: none;
+}
+
+
+.act_item .yui-resize-handle-inner-b {
+    width: 16px;  
+    margin-left: auto;
+    margin-right: auto;    
+    border-top: 0px double;
+    background-image: none;
+    position: relative;
+    left: 0;
+}
+
+.act_item:hover .yui-resize-handle-inner-b {
+	border-top: 3px double;
 }
 
 #cal-edit-buttons {
 	padding: 7px 5px 5px 5px;
 }
-	
-#cal-grid .owt {
-	display: none;
+
+#edit_all_recurrences_block button {
+	margin: 4px;
 }

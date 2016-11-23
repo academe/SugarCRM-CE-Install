@@ -36,11 +36,17 @@
 
 *}
 
-<div width="100%">
-<div align="right"><button type="button" class="button" onclick="javascript: CAL.toggle_shared_edit('shared_cal_edit');">{$MOD.LBL_EDIT_USERLIST}</button></div>	
-</div>
-
 <script language="javascript">
+{if $edit_shared}
+	{literal}
+	SUGAR.util.doWhen(function(){
+		return typeof cal_loaded != 'undefined' && cal_loaded == true && typeof dom_loaded != 'undefined' && dom_loaded == true;	
+	},function(){
+		CAL.toggle_shared_edit();
+	});
+	{/literal}
+{/if}
+
 {literal}
 			function up(name){
 				var td = document.getElementById(name+'_td');
@@ -93,15 +99,17 @@
 {/literal}
 </script>
 
-<div id="shared_cal_edit" style="{$style}">
-	<form name="shared_cal" action="index.php" method="post">
+<div id="shared_cal_edit" style="display: none; width: 400px;">
+<form name="shared_cal" action="index.php" method="post">
+<div class="hd">{$MOD.LBL_EDIT_USERLIST}</div>
+<div class="bd">	
 	<input type="hidden" name="module" value="Calendar">
 	<input type="hidden" name="action" value="index">
 	<input type="hidden" name="edit_shared" value="">
 	<input type="hidden" name="view" value="shared">
 	
 	
-	<table cellpadding="0" cellspacing="3" border="0" align="center">
+	<table cellpadding="0" cellspacing="3" border="0" align="center" width="100%">
 		<tr><th valign="top" align="center" colspan="2">{$MOD.LBL_SELECT_USERS}</th></tr>
 		<tr><td valign="top"></td><td valign="top">
 			<table cellpadding="1" cellspacing="1" border="0" class="edit view" align="center">
@@ -115,14 +123,13 @@
 						<a onclick="down('shared_ids');">{$DOWN}</a>
 					</td>
 				</tr>
-				<tr>
-					<td align="right" colspan="2">
-						<input class="button" type="submit" title="{$APP.LBL_SELECT_BUTTON_TITLE}" accesskey="{$APP.LBL_SELECT_BUTTON_KEY}" value="{$APP.LBL_SELECT_BUTTON_LABEL}"> 
-						<input class="button" onclick="javascript: CAL.toggle_shared_edit('shared_cal_edit');" type="button" title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accesskey="{$APP.LBL_CANCEL_BUTTON_KEY}" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
-					</td>
-				</tr>
 			</table>
 		</td></tr>
 	</table>
-	</form>
+</div>
+<div class="ft" style="text-align: right;">
+	<input class="button" type="button" title="{$APP.LBL_SELECT_BUTTON_TITLE}" accesskey="{$APP.LBL_SELECT_BUTTON_KEY}" value="{$APP.LBL_SELECT_BUTTON_LABEL}" onclick="document.shared_cal.submit();"> 
+	<input class="button" onclick="CAL.sharedDialog.cancel();" type="button" title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accesskey="{$APP.LBL_CANCEL_BUTTON_KEY}" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
+</div>
+</form>
 </div>

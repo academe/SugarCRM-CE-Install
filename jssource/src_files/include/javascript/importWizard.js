@@ -80,23 +80,6 @@ SUGAR.importWizard = function() {
 						oHead.appendChild( oScript);
 				}
 				
-				if ( !document.getElementById( "sugar_grp_overlib" )) {
-						var oScriptOverLib= document.createElement("script");
-						oScriptOverLib.type = "text/javascript";
-						oScriptOverLib.id = "sugar_grp_overlib";
-						oScriptOverLib.src="cache/include/javascript/sugar_grp_overlib.js";
-						oHead.appendChild( oScriptOverLib);
-						
-						var overDiv= document.createElement("div");
-						overDiv.id = "overDiv";
-						overDiv.style.position = "absolute"
-						overDiv.style.visibility = "hidden";
-						overDiv.style.zIndex = "1000";
-						overDiv.style.maxWidth = "400px";
-						var parentEl = oBody.firstChild;
-						parentEl.parentNode.insertBefore(overDiv, parentEl);
-	
-				}
 				
 				
 				var success = function(data) {		

@@ -145,7 +145,6 @@
 </table>
 </table>
 
-{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
 {sugar_getscript file="include/javascript/yui/dragdrop.js"}
 {literal}
 <script>

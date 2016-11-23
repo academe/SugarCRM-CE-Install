@@ -105,6 +105,14 @@ $dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
 	  	'isnull' => false,
 	    'comment' => 'Record deletion indicator'
 	  ),
+	'callback_url' =>
+      array (
+            'name' => 'callback_url',
+            'type' => 'url',
+            'len' => 255,
+            'required' => false,
+            'comment' => 'Callback URL for Authorization',
+      ),
       'consumer_link' =>
       array (
         'name' => 'consumer_link',

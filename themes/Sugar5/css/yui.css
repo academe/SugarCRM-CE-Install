@@ -1351,7 +1351,7 @@ p#clear {
 }
 
 .yui-dt-scrollable .yui-dt-bd {
-    overflow: auto;
+    overflow: scroll;
 }
 
 .yui-dt-scrollable .yui-dt-hd {
@@ -3393,7 +3393,7 @@ body.yui-layout {
     width: 6px;
     top: 45%;
     left: 0px;
-    background: transparent url(layout_sprite.png) no-repeat 0 -5px;
+    background: transparent url(../../../../index.php?entryPoint=getImage&imageName=layout_sprite.png) no-repeat 0 -5px;
 }
 
  .yui-layout-unit .yui-resize-handle-t .yui-layout-resize-knob, .yui-layout-unit .yui-resize-handle-b .yui-layout-resize-knob
@@ -3402,7 +3402,7 @@ body.yui-layout {
     height: 6px;
     width: 16px;
     left: 45%;
-    background: transparent url(layout_sprite.png) no-repeat -20px 0;
+    background: transparent url(../../../../index.php?entryPoint=getImage&imageName=layout_sprite.png) no-repeat -20px 0;
 }
 
  .yui-log {
@@ -4234,12 +4234,9 @@ a.yuimenuitemlabel:hover {
 }
 
  .yui-resize .yui-resize-handle {
-    background-color: #F2F2F2;
-    border:1px solid #808080;
 }
 
  .yui-resize .yui-resize-handle-active {
-    background-color: #7D98B8;
     zoom: 1;
 }
 
@@ -4279,7 +4276,7 @@ a.yuimenuitemlabel:hover {
 
  .yui-resize .yui-resize-handle-inner-r, .yui-resize .yui-resize-handle-inner-l
     {
-    background: transparent url( layout_sprite.png) no-repeat 0 -5px;
+    background: transparent url( ../../../../index.php?entryPoint=getImage&imageName=layout_sprite.png) no-repeat 0 -5px;
     height: 16px;
     width: 5px;
     position: absolute;
@@ -4288,7 +4285,7 @@ a.yuimenuitemlabel:hover {
 
  .yui-resize .yui-resize-handle-inner-t, .yui-resize .yui-resize-handle-inner-b
     {
-    background: transparent url(layout_sprite.png) no-repeat -20px 0;
+    background: transparent url(../../../../index.php?entryPoint=getImage&imageName=layout_sprite.png) no-repeat -20px 0;
     height: 5px;
     width: 16px;
     position: absolute;
@@ -4296,25 +4293,25 @@ a.yuimenuitemlabel:hover {
 }
 
  .yui-resize .yui-resize-handle-br {
-    background-image: url( layout_sprite.png );
+    background-image: url( ../../../../index.php?entryPoint=getImage&imageName=layout_sprite.png );
     background-repeat: no-repeat;
     background-position: -22px -62px;
 }
 
  .yui-resize .yui-resize-handle-tr {
-    background-image: url( layout_sprite.png );
+    background-image: url( ../../../../index.php?entryPoint=getImage&imageName=layout_sprite.png );
     background-repeat: no-repeat;
     background-position: -22px -42px;
 }
 
  .yui-resize .yui-resize-handle-tl {
-    background-image: url( layout_sprite.png );
+    background-image: url( ../../../../index.php?entryPoint=getImage&imageName=layout_sprite.png );
     background-repeat: no-repeat;
     background-position: -22px -82px;
 }
 
  .yui-resize .yui-resize-handle-bl {
-    background-image: url( layout_sprite.png );
+    background-image: url( ../../../../index.php?entryPoint=getImage&imageName=layout_sprite.png );
     background-repeat: no-repeat;
     background-position: -22px -23px;
 }

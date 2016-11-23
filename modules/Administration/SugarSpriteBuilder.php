@@ -306,7 +306,7 @@ class SugarSpriteBuilder
 				);
 			}
 
-			// use seperate class to arrange the images
+			// use separate class to arrange the images
 			$sp = new SpritePlacement($dirs, $config);
 			$sp->processSprites();
 
@@ -410,7 +410,9 @@ background-position: -{$offset_x}px -{$offset_y}px;
 				}
 
 				// common css header
-				$head = rtrim($head, "\n,")." {background: url('../../../index.php?entryPoint=getImage&imageName={$spriteFileName}&spriteNamespace={$nameSpace}'); no-repeat;display:inline-block;}\n";
+                require_once('include/utils.php');
+                $bg_path = getVersionedPath('index.php').'&entryPoint=getImage&imageName='.$spriteFileName.'&spriteNamespace='.$nameSpace;
+				$head = rtrim($head, "\n,")." {background: url('../../../{$bg_path}'); no-repeat;display:inline-block;}\n";
 
 				// append mode for repeatable sprites
                 $fileMode = $isRepeat ? 'a' : 'w';

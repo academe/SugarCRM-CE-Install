@@ -47,37 +47,37 @@ class Importer
     /**
      * @var ImportFieldSanitizer
      */
-    private $ifs;
+    protected $ifs;
 
     /**
      * @var Currency
      */
-    private $defaultUserCurrency;
+    protected $defaultUserCurrency;
 
     /**
      * @var importColumns
      */
-    private $importColumns;
+    protected $importColumns;
 
     /**
      * @var importSource
      */
-    private $importSource;
+    protected $importSource;
 
     /**
      * @var $isUpdateOnly
      */
-    private $isUpdateOnly;
+    protected $isUpdateOnly;
 
     /**
      * @var  $bean
      */
-    private $bean;
+    protected $bean;
 
     /**
      * @var sugarToExternalSourceFieldMap
      */
-    private $sugarToExternalSourceFieldMap = array();
+    protected $sugarToExternalSourceFieldMap = array();
 
 
     public function __construct($importSource, $bean)
@@ -274,9 +274,11 @@ class Importer
             {
                 //Start
                 $rowValue = $this->sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated);
-                if($rowValue === FALSE)
+                if ($rowValue === FALSE) {
+					/* BUG 51213 - jeff @ neposystems.com */
+                    $do_save = false;
                     continue;
-
+				}
             }
 
             // if the parent type is in singular form, get the real module name for parent_type
@@ -507,9 +509,14 @@ class Importer
         */
         if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) ||
              ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $timedate->to_db($timedate->to_display_date_time($focus->fetched_row['date_modified'])) )
-        )
+        ) 
             $focus->update_date_modified = false;
 
+        // Bug 53636 - Allow update of "Date Created"
+        if (!empty($focus->date_entered)) {
+        	$focus->update_date_entered = true;
+        }
+            
         $focus->optimistic_lock = false;
         if ( $focus->object_name == "Contact" && isset($focus->sync_contact) )
         {
@@ -521,13 +528,37 @@ class Importer
         else if($focus->object_name == "User" && !empty($current_user) && $focus->is_admin && !is_admin($current_user) && is_admin_for_module($current_user, 'Users')) {
             sugar_die($GLOBALS['mod_strings']['ERR_IMPORT_SYSTEM_ADMININSTRATOR']);
         }
+        //bug# 46411 importing Calls will not populate Leads or Contacts Subpanel
+        if (!empty($focus->parent_type) && !empty($focus->parent_id))
+        {
+            foreach ($focus->relationship_fields as $key => $val)
+            {
+                if ($val == strtolower($focus->parent_type))
+                {
+                    $focus->$key = $focus->parent_id;
+                }
+            }
+        }					
         //bug# 40260 setting it true as the module in focus is involved in an import
         $focus->in_import=true;
         // call any logic needed for the module preSave
         $focus->beforeImportSave();
 
+        // Bug51192: check if there are any changes in the imported data
+        $hasDataChanges = false;
+        $dataChanges=$focus->db->getDataChanges($focus);
+        
+        if(!empty($dataChanges)) {
+            foreach($dataChanges as $field=>$fieldData) {
+                if($fieldData['data_type'] != 'date' || strtotime($fieldData['before']) != strtotime($fieldData['after'])) {
+                    $hasDataChanges = true;
+                    break;
+                }
+            }
+        }
+        
         // if modified_user_id is set, set the flag to false so SugarBEan will not reset it
-        if (isset($focus->modified_user_id) && $focus->modified_user_id) {
+        if (isset($focus->modified_user_id) && $focus->modified_user_id && !$hasDataChanges) {
             $focus->update_modified_by = false;
         }
         // if created_by is set, set the flag to false so SugarBEan will not reset it

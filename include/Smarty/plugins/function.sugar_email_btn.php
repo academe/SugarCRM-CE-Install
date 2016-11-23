@@ -52,7 +52,7 @@ function smarty_function_sugar_email_btn($params, &$smarty)
 	if ($client != 'sugar') {
 		$pdfButtons = '<input title="'. $app_strings["LBL_EMAIL_COMPOSE"] . '" class="button" type="submit" name="button" value="'. $app_strings["LBL_EMAIL_COMPOSE"] . '" onclick="location.href=\'mailto:\';return false;"> ';
 	} else {
-		$pdfButtons = '<input title="'. $app_strings["LBL_EMAIL_PDF_BUTTON_TITLE"] . '" class="button" type="submit" name="button" value="'. $app_strings["LBL_EMAIL_PDF_BUTTON_LABEL"] . '" onclick="this.form.email_action.value=\'EmailLayout\';"> ';
+		$pdfButtons = '<input id="email_as_pdf_button" title="'. $app_strings["LBL_EMAIL_PDF_BUTTON_TITLE"] . '" class="button" type="submit" name="button" value="'. $app_strings["LBL_EMAIL_PDF_BUTTON_LABEL"] . '" onclick="this.form.email_action.value=\'EmailLayout\';"> ';
 	}
 	return $pdfButtons;
 }

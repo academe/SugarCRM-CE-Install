@@ -38,7 +38,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopSelectButton.php');
+
 
 class SugarWidgetSubPanelTopSelectAccountButton extends SugarWidgetSubPanelTopSelectButton {
 	function display(&$widget_data)

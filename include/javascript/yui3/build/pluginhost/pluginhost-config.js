@@ -1,14 +1,8 @@
 /*
- Copyright (c) 2010, Yahoo! Inc. All rights reserved.
- Code licensed under the BSD License:
- http://developer.yahoo.com/yui/license.html
- version: 3.3.0
- build: 3167
- */
-YUI.add('pluginhost-config',function(Y){var PluginHost=Y.Plugin.Host,L=Y.Lang;PluginHost.prototype._initConfigPlugins=function(config){var classes=(this._getClasses)?this._getClasses():[this.constructor],plug=[],unplug={},constructor,i,classPlug,classUnplug,pluginClassName;for(i=classes.length-1;i>=0;i--){constructor=classes[i];classUnplug=constructor._UNPLUG;if(classUnplug){Y.mix(unplug,classUnplug,true);}
-classPlug=constructor._PLUG;if(classPlug){Y.mix(plug,classPlug,true);}}
-for(pluginClassName in plug){if(plug.hasOwnProperty(pluginClassName)){if(!unplug[pluginClassName]){this.plug(plug[pluginClassName]);}}}
-if(config&&config.plugins){this.plug(config.plugins);}};PluginHost.plug=function(hostClass,plugin,config){var p,i,l,name;if(hostClass!==Y.Base){hostClass._PLUG=hostClass._PLUG||{};if(!L.isArray(plugin)){if(config){plugin={fn:plugin,cfg:config};}
-plugin=[plugin];}
-for(i=0,l=plugin.length;i<l;i++){p=plugin[i];name=p.NAME||p.fn.NAME;hostClass._PLUG[name]=p;}}};PluginHost.unplug=function(hostClass,plugin){var p,i,l,name;if(hostClass!==Y.Base){hostClass._UNPLUG=hostClass._UNPLUG||{};if(!L.isArray(plugin)){plugin=[plugin];}
-for(i=0,l=plugin.length;i<l;i++){p=plugin[i];name=p.NAME;if(!hostClass._PLUG[name]){hostClass._UNPLUG[name]=p;}else{delete hostClass._PLUG[name];}}}};},'3.3.0',{requires:['pluginhost-base']});
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
+*/
+YUI.add("pluginhost-config",function(C){var B=C.Plugin.Host,A=C.Lang;B.prototype._initConfigPlugins=function(E){var G=(this._getClasses)?this._getClasses():[this.constructor],D=[],H={},F,I,K,L,J;for(I=G.length-1;I>=0;I--){F=G[I];L=F._UNPLUG;if(L){C.mix(H,L,true);}K=F._PLUG;if(K){C.mix(D,K,true);}}for(J in D){if(D.hasOwnProperty(J)){if(!H[J]){this.plug(D[J]);}}}if(E&&E.plugins){this.plug(E.plugins);}};B.plug=function(E,I,G){var J,H,D,F;if(E!==C.Base){E._PLUG=E._PLUG||{};if(!A.isArray(I)){if(G){I={fn:I,cfg:G};}I=[I];}for(H=0,D=I.length;H<D;H++){J=I[H];F=J.NAME||J.fn.NAME;E._PLUG[F]=J;}}};B.unplug=function(E,H){var I,G,D,F;if(E!==C.Base){E._UNPLUG=E._UNPLUG||{};if(!A.isArray(H)){H=[H];}for(G=0,D=H.length;G<D;G++){I=H[G];F=I.NAME;if(!E._PLUG[F]){E._UNPLUG[F]=I;}else{delete E._PLUG[F];}}}};},"3.3.0",{requires:["pluginhost-base"]});

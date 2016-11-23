@@ -93,7 +93,7 @@
                 </tr>
                 <tr>
                 <td scope="row" valign="top"><slot>{$MOD.LBL_REMINDER|strip_semicolon}:</td>
-                <td valign="top" nowrap><slot><input name='should_remind' tabindex='1' size='2' maxlength='2'  disabled type="checkbox" class="checkbox" value='1' {$REMINDER_CHECKED}>&nbsp;{$REMINDER_TIME}</slot></td>
+                <td valign="top" nowrap><slot>{include file="modules/Meetings/tpls/reminders.tpl"}</slot></td>
                 <td ><slot>{$MOD.LBL_REMINDER_TEXT}&nbsp;</slot></td>
 
                 </tr>
@@ -176,10 +176,6 @@
                     <td width="15%" scope="row"><slot>{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT|strip_semicolon}:</slot></td>
                     <td><slot>{$NAME_FORMAT}&nbsp;</slot></td>
                     <td><slot></slot>{$MOD.LBL_LOCALE_NAME_FORMAT_DESC}&nbsp;</td>
-                </tr><tr> 
-                    <td width="15%" scope="row"><slot>{$MOD.LBL_FDOW|strip_semicolon}:</slot></td>
-                    <td><slot>{$FDOWDISPLAY}&nbsp;</slot></td>
-                    <td><slot></slot>{$MOD.LBL_FDOW_TEXT}&nbsp;</td>
                 </tr>
             </table>
         </div>
@@ -197,11 +193,20 @@
             </tr>
             <tr>
             <td width="15%" scope="row"><slot><nobr>{$MOD.LBL_YOUR_PUBLISH_URL|strip_semicolon}:</nobr></slot></td>
-            <td colspan=2><slot>{$CALENDAR_PUBLISH_URL}</slot></td>
+            <td colspan=2>{if $CALENDAR_PUBLISH_KEY}{$CALENDAR_PUBLISH_URL}{else}{$MOD.LBL_NO_KEY}{/if}</td>
             </tr>
             <tr>
             <td width="15%" scope="row"><slot>{$MOD.LBL_SEARCH_URL|strip_semicolon}:</slot></td>
-            <td colspan=2><slot>{$CALENDAR_SEARCH_URL}</slot></td>
+            <td colspan=2><slot>{if $CALENDAR_PUBLISH_KEY}{$CALENDAR_SEARCH_URL}{else}{$MOD.LBL_NO_KEY}{/if}</slot></td>
+            </tr>
+            <tr>
+            <td width="15%" scope="row"><slot>{$MOD.LBL_ICAL_PUB_URL|strip_semicolon}: {sugar_help text=$MOD.LBL_ICAL_PUB_URL_HELP}</slot></td>
+            <td colspan=2><slot>{if $CALENDAR_PUBLISH_KEY}{$CALENDAR_ICAL_URL}{else}{$MOD.LBL_NO_KEY}{/if}</slot></td>
+            </tr>
+            <tr>
+            <td width="15%" scope="row"><slot>{$MOD.LBL_FDOW|strip_semicolon}:</slot></td>
+            <td><slot>{$FDOWDISPLAY}&nbsp;</slot></td>
+            <td><slot></slot>{$MOD.LBL_FDOW_TEXT}&nbsp;</td>
             </tr>
             </table>
         </div>
@@ -214,11 +219,6 @@
             <td width="15%" scope="row"><slot>{$MOD.LBL_USE_GROUP_TABS|strip_semicolon}:</slot></td>
             <td><slot><input class="checkbox" type="checkbox" disabled {$USE_GROUP_TABS}></slot></td>
             <td><slot>{$MOD.LBL_NAVIGATION_PARADIGM_DESCRIPTION}&nbsp;</slot></td>
-            </tr>
-            <tr>
-            <td width="15%" scope="row"><slot>{$MOD.LBL_MAX_TAB|strip_semicolon}:</slot></td>
-            <td width="15%"><slot>{$MAX_TAB}&nbsp;</slot></td>
-            <td><slot>{$MOD.LBL_MAX_TAB_DESCRIPTION}&nbsp;</slot></td>
             </tr>
             <tr>
             <td width="15%" scope="row"><slot>{$MOD.LBL_SUBPANEL_TABS|strip_semicolon}:</slot></td>

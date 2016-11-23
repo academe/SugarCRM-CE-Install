@@ -38,7 +38,7 @@
 
 {if $controls}
 
-<div style='width: 100%; margin-top: 12px;'></div>
+<div class="clear"></div>
 
 <div style='float:left; width: 50%;'>
 {foreach name=tabs from=$tabs key=k item=tab}
@@ -47,10 +47,13 @@
 </div>
 
 <div style="float:left; text-align: right; width: 50%; font-size: 12px;">
-	{if $view != 'year'}
+	{if $view == "shared"}
+		<button id="userListButtonId" type="button" class="button" onclick="javascript: CAL.toggle_shared_edit('shared_cal_edit');">{$MOD.LBL_EDIT_USERLIST}</button>
+	{/if}
+	{if $view != 'year' && !$print}
 	<span class="dateTime">
-					<img border="0" src="{$cal_img}" alt="Enter Date" id="goto_date_trigger" align="absmiddle">					
-					<input type="hidden" id="goto_date" name="goto_date" value="{$current_date}">		
+					<img border="0" src="{$cal_img}" alt="{$APP.LBL_ENTER_DATE}" id="goto_date_trigger" align="absmiddle">
+					<input type="hidden" id="goto_date" name="goto_date" value="{$current_date}">
 					<script type="text/javascript">
 					Calendar.setup ({literal}{{/literal}
 						inputField : "goto_date",
@@ -63,8 +66,8 @@
 						onUpdate: goto_date_call,
 						startWeekday: {$start_weekday},
 						weekNumbers:false
-					{literal}}{/literal});	
-					{literal}	
+					{literal}}{/literal});
+					{literal}
 					YAHOO.util.Event.onDOMReady(function(){
 						YAHOO.util.Event.addListener("goto_date","change",goto_date_call);
 					});
@@ -75,7 +78,7 @@
 					</script>
 	</span>
 	{/if}
-	<input type="button" class="button" id="cal_settings" onclick="CAL.toggle_settings()" value="{$MOD.LBL_SETTINGS}">
+	<input type="button" id="cal_settings" class="button" onclick="CAL.toggle_settings()" value="{$MOD.LBL_SETTINGS}">
 </div>
 
 <div style='clear: both;'></div>

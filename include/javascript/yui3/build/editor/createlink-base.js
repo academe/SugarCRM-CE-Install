@@ -1,10 +1,8 @@
 /*
- Copyright (c) 2010, Yahoo! Inc. All rights reserved.
- Code licensed under the BSD License:
- http://developer.yahoo.com/yui/license.html
- version: 3.3.0
- build: 3167
- */
-YUI.add('createlink-base',function(Y){var CreateLinkBase={};CreateLinkBase.STRINGS={PROMPT:'Please enter the URL for the link to point to:',DEFAULT:'http://'};Y.namespace('Plugin');Y.Plugin.CreateLinkBase=CreateLinkBase;Y.mix(Y.Plugin.ExecCommand.COMMANDS,{createlink:function(cmd){var inst=this.get('host').getInstance(),out,a,sel,holder,url=prompt(CreateLinkBase.STRINGS.PROMPT,CreateLinkBase.STRINGS.DEFAULT);if(url){holder=inst.config.doc.createElement('div');url=inst.config.doc.createTextNode(url);holder.appendChild(url);url=holder.innerHTML;this.get('host')._execCommand(cmd,url);sel=new inst.Selection();out=sel.getSelected();if(!sel.isCollapsed&&out.size()){a=out.item(0).one('a');if(a){out.item(0).replace(a);}
-if(Y.UA.gecko){if(a.get('parentNode').test('span')){if(a.get('parentNode').one('br.yui-cursor')){a.get('parentNode').insert(a,'before');}}}}else{this.get('host').execCommand('inserthtml','<a href="'+url+'">'+url+'</a>');}}
-return a;}});},'3.3.0',{requires:['editor-base'],skinnable:false});
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
+*/
+YUI.add("createlink-base",function(B){var A={};A.STRINGS={PROMPT:"Please enter the URL for the link to point to:",DEFAULT:"http://"};B.namespace("Plugin");B.Plugin.CreateLinkBase=A;B.mix(B.Plugin.ExecCommand.COMMANDS,{createlink:function(I){var H=this.get("host").getInstance(),E,C,G,F,D=prompt(A.STRINGS.PROMPT,A.STRINGS.DEFAULT);if(D){F=H.config.doc.createElement("div");D=H.config.doc.createTextNode(D);F.appendChild(D);D=F.innerHTML;this.get("host")._execCommand(I,D);G=new H.Selection();E=G.getSelected();if(!G.isCollapsed&&E.size()){C=E.item(0).one("a");if(C){E.item(0).replace(C);}if(B.UA.gecko){if(C.get("parentNode").test("span")){if(C.get("parentNode").one("br.yui-cursor")){C.get("parentNode").insert(C,"before");}}}}else{this.get("host").execCommand("inserthtml",'<a href="'+D+'">'+D+"</a>");}}return C;}});},"3.3.0",{requires:["editor-base"],skinnable:false});

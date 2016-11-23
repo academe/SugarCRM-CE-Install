@@ -529,12 +529,15 @@ class RenameModules
 
                     $replaceKey = $linkEntry['vname'];
                     $oldStringValue = $mod_strings[$replaceKey];
-                    //At this point we don't know if we should replace the string with the plural or singular version of the new
-                    //strings so we'll try both but with the plural version first since it should be longer than the singular.
-                    $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_plural'], ENT_QUOTES), $renameFields['plural'], $oldStringValue);
-                    if ($replacedString == $oldStringValue) {
-                        $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_singular'], ENT_QUOTES), $renameFields['singular'], $replacedString);
+                   // Use the plural value of the two only if it's longer and the old language string contains it,
+                   // singular otherwise
+                    if (strlen($renameFields['prev_plural']) > strlen($renameFields['prev_singular']) && strpos($oldStringValue, $renameFields['prev_plural']) !== false) {
+                        $key = 'plural';
+                    } else {
+                       $key = 'singular';
+
                     }
+                    $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_' . $key], ENT_QUOTES), $renameFields[$key], $oldStringValue);
                     $replacementStrings[$replaceKey] = $replacedString;
                 }
             }
@@ -780,7 +783,17 @@ class RenameModules
             $replace = call_user_func($modifier, $replace);
         }
         
-        return str_replace($search, $replace, $oldStringValue);
+        // Bug 47957
+        // If nothing was replaced - try to replace original string
+        $result = '';
+        $replaceCount = 0;
+        $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
+        if(!$replaceCount){
+            $replaceKey = 'key_' . $replacementMetaData['type'];
+            $search = html_entity_decode_utf8($replacementLabels[$replaceKey], ENT_QUOTES);
+            $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
+        }
+        return $result;
     }
 
 
@@ -868,9 +881,10 @@ class RenameModules
         while(isset($params['slot_' . $count]))
         {
             $index = $params['slot_' . $count];
-            $key = (isset($params['key_' . $index]))?to_html(remove_xss(from_html($params['key_' . $index]))): 'BLANK';
-            $value = (isset($params['value_' . $index]))?to_html(remove_xss(from_html($params['value_' . $index]))): '';
-            $svalue = (isset($params['svalue_' . $index]))?to_html(remove_xss(from_html($params['svalue_' . $index]))): $value;
+
+            $key = (isset($params['key_' . $index]))?SugarCleaner::stripTags($params['key_' . $index]): 'BLANK';
+            $value = (isset($params['value_' . $index]))?SugarCleaner::stripTags($params['value_' . $index]): '';
+            $svalue = (isset($params['svalue_' . $index]))?SugarCleaner::stripTags($params['svalue_' . $index]): $value;
             if($key == 'BLANK')
                $key = '';
 

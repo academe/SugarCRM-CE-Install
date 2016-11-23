@@ -66,7 +66,7 @@ class One2MRelationship extends M2MRelationship
                 $GLOBALS['log']->fatal("No Links found for relationship {$this->name}");
             }
             else {
-                if (!is_array($links)) //Only one link for a self referencing relationship, this is BAAAD
+                if (!is_array($links)) //Only one link for a self referencing relationship, this is very bad.
                 {
                     $this->lhsLinkDef = $this->rhsLinkDef = $links;
                 }
@@ -107,36 +107,9 @@ class One2MRelationship extends M2MRelationship
         $this->rhsLink = $this->rhsLinkDef['name'];
     }
 
-    public function getQuery($link, $params = array())
-    {
-        //Self referenceing one to many relationships use one link for subpanels and normal views.
-        //This mean we have to reverse it for normal views
-        if (($link->getSide() == REL_LHS && !$this->selfReferencing)
-            || $link->getSide() == REL_RHS && $this->selfReferencing
-        ) {
-            $knownKey = $this->def['join_key_lhs'];
-            $targetKey = $this->def['join_key_rhs'];
-        }
-        else
-        {
-            $knownKey = $this->def['join_key_rhs'];
-            $targetKey = $this->def['join_key_lhs'];
-        }
-        $rel_table = $this->getRelationshipTable();
-
-        $where = "$rel_table.$knownKey = '{$link->getFocus()->id}'" . $this->getRoleWhere();
-
-        if (empty($params['return_as_array'])) {
-            return "SELECT $targetKey id FROM $rel_table WHERE $where AND deleted=0";
-        }
-        else
-        {
-            return array(
-                'select' => "SELECT $targetKey id",
-                'from' => "FROM $rel_table",
-                'where' => "WHERE $where AND $rel_table.deleted=0",
-            );
-        }
+    protected function linkIsLHS($link) {
+        return ($link->getSide() == REL_LHS && !$this->selfReferencing) ||
+               ($link->getSide() == REL_RHS && $this->selfReferencing);
     }
 
     /**
@@ -148,23 +121,54 @@ class One2MRelationship extends M2MRelationship
     public function add($lhs, $rhs, $additionalFields = array())
     {
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
+        
         //If the current data matches the existing data, don't do anything
         if (!$this->checkExisting($dataToInsert))
         {
-            $rhsLinkName = $this->rhsLink;
-            //In a one to many, any existing links from the many (right) side must be removed first
-            $rhs->load_relationship($rhsLinkName);
-            $this->removeAll($rhs->$rhsLinkName);
+			// Pre-load the RHS relationship, which is used later in the add() function and expects a Bean
+			// and we also use it for clearing relationships in case of non self-referencing O2M relations
+			// (should be preloaded because when using the relate_to field for updating/saving relationships,
+			// only the bean id is loaded into $rhs->$rhsLinkName)
+			$rhsLinkName = $this->rhsLink;
+			$rhs->load_relationship($rhsLinkName);
+        	
+			// If it's a One2Many self-referencing relationship
+        	// the positions of the default One (LHS) and Many (RHS) are swaped
+        	// so we should clear the links from the many (left) side
+        	if ($this->selfReferencing) {
+        		// Load right hand side relationship name
+	            $linkName = $this->rhsLink;
+	            // Load the relationship into the left hand side bean
+	            $lhs->load_relationship($linkName);
+	            
+	            // Pick the loaded link
+	            $link = $lhs->$linkName;
+	            // Get many (LHS) side bean
+	            $focus = $link->getFocus();
+	            // Get relations
+	        	$related = $link->getBeans();
+	        	
+        		// Clear the relations from many side bean
+	        	foreach($related as $relBean) {
+	        		$this->remove($focus, $relBean);
+	        	}
+            } else { // For non self-referencing, remove all the relationships from the many (RHS) side
+            	$this->removeAll($rhs->$rhsLinkName);
+            }
+            
+            // Add relationship
             parent::add($lhs, $rhs, $additionalFields);
         }
     }
 
     /**
      * Just overriding the function from M2M to prevent it from occuring
+     * 
+     * The logic for dealing with adding self-referencing one-to-many relations is in the add() method
      */
     protected function addSelfReferencing($lhs, $rhs, $additionalFields = array())
     {
-        //No opp on One2M.
+        //No-op on One2M.
     }
 
     /**
@@ -172,6 +176,6 @@ class One2MRelationship extends M2MRelationship
      */
     protected function removeSelfReferencing($lhs, $rhs, $additionalFields = array())
     {
-        //No opp on One2M.
+        //No-op on One2M.
     }
 }

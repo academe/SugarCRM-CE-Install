@@ -140,6 +140,7 @@ class InsideViewLogicHook {
         if ( $GLOBALS['app']->controller->action != 'DetailView' ) {
             return;
         }
+        require_once('include/connectors/utils/ConnectorUtils.php');
 
         $bean = $GLOBALS['app']->controller->bean;
 
@@ -192,6 +193,8 @@ class InsideViewLogicHook {
             $smarty->assign('logo_collapsed',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_collapsed.png'));
 
             $smarty->assign('AJAX_URL',$url);
+            $smarty->assign('APP', $GLOBALS['app_strings']);
+
             if ( $GLOBALS['current_user']->getPreference('allowInsideView','Connectors') != 1 )
             {
                 $smarty->assign('showInsideView',false);

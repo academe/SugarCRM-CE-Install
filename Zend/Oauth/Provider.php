@@ -56,6 +56,7 @@ class Zend_Oauth_Provider
     protected $tokenHandler;
     protected $consumerHandler;
     protected $nonceHandler;
+    protected $oauth_params;
 
     protected $requestPath;
     /**
@@ -255,13 +256,22 @@ class Zend_Oauth_Provider
 	    if(empty($_SERVER['SERVER_PORT']) || empty($_SERVER['HTTP_HOST']) || empty($_SERVER['REQUEST_URI'])) {
 	        return Zend_Uri_Http::fromString("http://localhost/");
 	    }
-	    if($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) &&  $_SERVER['HTTPS'] == 'on')) {
+	    if($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) &&  $_SERVER['HTTPS'] == 'on') || (!empty($_SERVER['HTTP_HTTPS']) &&  $_SERVER['HTTP_HTTPS'] == 'on')) {
 	        $proto = 'https';
 	    }
 	    return Zend_Uri_Http::fromString("$proto://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
 	}
 
 	/**
+     * Returns oauth parameters
+     * @return array
+     */
+    public function getOAuthParams()
+    {
+        return $this->oauth_params;
+    }
+
+    /**
 	 * Validate OAuth request
 	 * @param Zend_Uri_Http $url Request URL, will use current if null
 	 * @param array $params Additional parameters
@@ -286,6 +296,7 @@ class Zend_Oauth_Provider
 	        $method = 'GET';
 	    }
         $params = $this->assembleParams($method, $params);
+        $this->oauth_params = $params;
         $this->checkSignatureMethod($params['oauth_signature_method']);
         $this->checkRequiredParams($params);
 
@@ -314,7 +325,9 @@ class Zend_Oauth_Provider
 
         if($this->needsToken()) {
             $this->token = $params['oauth_token'];
-            $this->verifier = $params['oauth_verifier'];
+            if(isset($params['oauth_verifier'])) {
+                $this->verifier = $params['oauth_verifier'];
+            }
             if(!is_callable($this->tokenHandler)) {
                 throw new Zend_Oauth_Exception("Token handler not callable", self::TOKEN_REJECTED);
             }
@@ -333,6 +346,7 @@ class Zend_Oauth_Provider
         if($req_sign != $our_sign) {
             // TODO: think how to extract signature base string
             $this->problem = $our_sign;
+            $GLOBALS['log']->fatal("Bad signature: $req_sign != $our_sign");
             throw new Zend_Oauth_Exception("Invalid signature", self::INVALID_SIGNATURE);
         }
 

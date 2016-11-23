@@ -43,12 +43,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
-require_once('data/Link.php');
+require_once('data/Link2.php');
 
 /**
  * @brief Bug #40166. Campaign Log Report will not display Contact/Account Names
  */
-class ProspectLink extends Link
+class ProspectLink extends Link2
 {
 
     /**
@@ -93,7 +93,7 @@ class ProspectLink extends Link
             // join list targets
             $join .= ' '.$join_type.' prospect_lists_prospects '.$alias_prefix.'_plp ON';
             $join .= ' '.$alias_prefix.'_plp.prospect_list_id = '.$alias_prefix.'_plc.prospect_list_id AND';
-            $join .= ' '.$alias_prefix.'_plp.related_type = "'.$module.'"'."\n";
+            $join .= ' '.$alias_prefix.'_plp.related_type = '.$GLOBALS['db']->quoted($module)."\n";
 
             // join target
             $join .= ' '.$join_type.' '.$table_with_alias.' ON';

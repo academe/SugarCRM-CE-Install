@@ -35,8 +35,8 @@
  ********************************************************************************/
 
 *}
-<link type="text/css" href="modules/Calendar/Cal.css" rel="stylesheet" />
-<script type="text/javascript" src="modules/Calendar/Cal.js"></script>
+<link type="text/css" href="{sugar_getjspath file="modules/Calendar/Cal.css"}" rel="stylesheet" />
+{sugar_getscript file="modules/Calendar/Cal.js"}
 <script type="text/javascript">
 
 	{literal}
@@ -57,46 +57,40 @@
 		CAL.current_user_id = "{$current_user_id}";	
 		CAL.current_user_name = "{$current_user_name}";
 		CAL.time_format = "{$time_format}";
+		CAL.enable_repeat = "{$enable_repeat}";
 		CAL.items_draggable = "{$items_draggable}";
-		CAL.item_text = "{$item_text}";
-		CAL.mouseover_expand = "{$mouseover_expand}";		
-		
-		CAL.celcount = {$celcount};
+		CAL.items_resizable = "{$items_resizable}";
 		CAL.cells_per_day = {$cells_per_day};	
 		CAL.current_params = {literal}{}{/literal};
-		CAL.dashlet = "{$dashlet}";	
-		
+		CAL.dashlet = "{$dashlet}";		
 		CAL.grid_start_ts = {$grid_start_ts};
 		CAL.scroll_slot = {$scroll_slot};
+		CAL.basic.min_height = {$basic_min_height};
 
 		CAL.lbl_create_new = "{$MOD.LBL_CREATE_NEW_RECORD}";
 		CAL.lbl_edit = "{$MOD.LBL_EDIT_RECORD}";
 		CAL.lbl_saving = "{$MOD.LBL_SAVING}";
 		CAL.lbl_loading = "{$MOD.LBL_LOADING}";
+		CAL.lbl_sending = "{$MOD.LBL_SENDING_INVITES}";
 		CAL.lbl_confirm_remove = "{$MOD.LBL_CONFIRM_REMOVE}";
+		CAL.lbl_confirm_remove_all_recurring = "{$MOD.LBL_CONFIRM_REMOVE_ALL_RECURRING}";
+		
 		CAL.lbl_error_saving = "{$MOD.LBL_ERROR_SAVING}";
 		CAL.lbl_error_loading = "{$MOD.LBL_ERROR_LOADING}";
-		CAL.lbl_desc = "{$MOD.LBL_INFO_DESC}";
-		CAL.lbl_start = "{$MOD.LBL_INFO_START_DT}";
-		CAL.lbl_due = "{$MOD.LBL_INFO_DUE_DT}";
-		CAL.lbl_duration = "{$MOD.LBL_INFO_DURATION}";
-		CAL.lbl_name = "{$MOD.LBL_INFO_NAME}";
-		CAL.lbl_title = "{$MOD.LBL_INFO_TITLE}";
-		CAL.lbl_related = "{$MOD.LBL_INFO_RELATED_TO}";	
-		CAL.lbl_hours_abbrev = "{$MOD.LBL_HOURS_ABBREV}";
-		CAL.lbl_mins_abbrev = "{$MOD.LBL_MINS_ABBREV}";			
-	
-		CAL.img_edit_inline = "{$img_edit_inline}";
-		CAL.img_view_inline = "{$img_view_inline}";
-		CAL.img_close = "{$img_close}";		
+		CAL.lbl_repeat_limit_error = "{$MOD.LBL_REPEAT_LIMIT_ERROR}";
 		
+		CAL.year = {$year};
+		CAL.month = {$month};
+		CAL.day = {$day};
+
+		CAL.print = {$isPrint};
 		
 		{literal}
 		var scrollable = CAL.get("cal-scrollable");
 		if(scrollable){
-			scrollable.scrollTop = 15 * CAL.scroll_slot - 1;
+			scrollable.scrollTop = (CAL.slot_height + 1) * CAL.scroll_slot - 1;
 			if(CAL.view == "day")
-				scrollable.scrollTop++;	
+				scrollable.scrollTop++;
 		}
 		{/literal}			
 
@@ -129,18 +123,27 @@
 		if(CAL.items_draggable){			
 			var target_slots = [];			
 			var slots = CAL.query('#cal-grid div.slot');
+			var cnt = 0;
+			CAL.each(
+				slots,
+				function(i,v){					
+					target_slots[i] = new YAHOO.util.DDTarget(slots[i].id,"cal");
+					cnt++;
+				}
+			);
+			slots = CAL.query('#cal-grid div.basic_slot');
 			CAL.each(
 				slots,
 				function(i,v){
-					target_slots[i] = new YAHOO.util.DDTarget(slots[i].id,"cal"); 
+					target_slots[cnt + i] = new YAHOO.util.DDTarget(slots[i].id,"basic_cal");
 				}
-			);			
+			);				
 		}	
 		
-		var nodes = CAL.query("#cal-grid div.slot");
+		var nodes = CAL.query("#cal-grid div.slot, #cal-grid div.basic_slot");
 		CAL.each(nodes, function(i,v){
 			YAHOO.util.Event.on(nodes[i],"mouseover",function(){
-				if(CAL.records_openable)
+				if(CAL.records_openable && !CAL.disable_creating)
 					this.style.backgroundColor = "#D1DCFF";							
 				if(!this.childNodes.length)	
 					this.setAttribute("title",this.getAttribute("time"));
@@ -156,53 +159,46 @@
 			});
 		});				
 		
-		CAL.init_edit_dialog(
-				{
-					width: "{/literal}{$editview_width}{literal}",
-					height: "{/literal}{$editview_height}{literal}"
-				}
-		);
+		CAL.init_edit_dialog({
+			width: "{/literal}{$editview_width}{literal}",
+			height: "{/literal}{$editview_height}{literal}"
+		});
 		
 		YAHOO.util.Event.on(window, 'resize', function(){
 			CAL.fit_grid();
 			CAL.update_dd.fire();
 		});		
 				
-		YAHOO.util.Event.on("btn-save","click",function(){																		
-			if(!(check_form('CalendarEditView') && cal_isValidDuration())){
-				CAL.select_tab("cal-tab-1");
-				return false;
-			}								
+		YAHOO.util.Event.on("btn-save","click",function(){																	
+			if(!CAL.check_forms())
+				return false;											
 			CAL.dialog_save();	
 		});
 		
-		YAHOO.util.Event.on("btn-send-invites","click",function(){																		
-			if(!(check_form('CalendarEditView') && cal_isValidDuration())){
-				CAL.select_tab("cal-tab-1");
-				return false;
-			}			
+		YAHOO.util.Event.on("btn-send-invites","click",function(){																				
+			if(!CAL.check_forms())
+				return false;	
 			CAL.get("send_invites").value = "1";							
 			CAL.dialog_save();	
 		});		
-		
-
-		YAHOO.util.Event.on("btn-apply","click",function(){
-			if(!(check_form('CalendarEditView') && cal_isValidDuration())){
-				CAL.select_tab("cal-tab-1");
-				return false;
-			}
-			CAL.dialog_apply();
-		});	
 				
 		YAHOO.util.Event.on("btn-delete","click",function(){
 			if(CAL.get("record").value != "")
 				if(confirm(CAL.lbl_confirm_remove))
-					CAL.dialog_remove();				
+					CAL.dialog_remove();
 						
 		});	
 	
 		YAHOO.util.Event.on("btn-cancel","click",function(){			
-			CAL.editDialog.cancel();						
+			document.schedulerwidget.reset();
+            if(document.getElementById('empty-search-message')) {
+                document.getElementById('empty-search-message').style.display = 'none';
+            }
+            CAL.editDialog.cancel();						
+		}); 
+		
+		YAHOO.util.Event.on("btn-full-form","click",function(){			
+			CAL.full_form();						
 		}); 
 
 		CAL.select_tab("cal-tab-1");
@@ -217,23 +213,22 @@
 		
 		{/literal}
 				
-		var calendar_items = [
-			{$a_str}		
-		];
-			
+		var calendar_items = {$a_str};
+					
 		{literal}
-		CAL.each(calendar_items, function(i,v){				
-			CAL.add_item_to_grid(calendar_items[i]);				
+		CAL.each(calendar_items, function(i,v){
+			CAL.add_item_to_grid(calendar_items[i]);
 		});
 		{/literal}
 		
 		{if $view != "year"}
 		CAL.arrange_advanced();
+		CAL.basic.populate_grid();		
 		CAL.fit_grid();
 		CAL.update_dd.fire();
 		{/if}
 		
-		cal_loaded = null;		
+		cal_loaded = null;	
 	});
 </script>
 			
@@ -245,6 +240,9 @@
 			<ul class="yui-nav">
 				<li id="tab_general"><a tabname="cal-tab-1" id="cal-tab-1-link"><em>{$MOD.LBL_GENERAL_TAB}</em></a></li>
 				<li id="tab_invitees"><a tabname="cal-tab-2" id="cal-tab-2-link"><em>{$MOD.LBL_PARTICIPANTS_TAB}</em></a></li>
+				{if $enable_repeat}
+				<li id="tab_repeat"><a tabname="cal-tab-3" id="cal-tab-3-link"><em>{$MOD.LBL_REPEAT_TAB}</em></a></li>
+				{/if}
 			</ul>
 			<div id="cal-tab-1" class="yui-content">
 				{include file=$form}
@@ -252,14 +250,19 @@
 			<div id="cal-tab-2" class="yui-content">
 				<div class="h3Row" id="scheduler"></div>
 			</div>
+			{if $enable_repeat}
+			<div id="cal-tab-3" class="yui-content">
+				{include file=$repeat}
+			</div>
+			{/if}
 		</div>
 	</div>	
 	<div id="cal-edit-buttons" class="ft">
 		<button id="btn-save" class="button" type="button">{$MOD.LBL_SAVE_BUTTON}</button>
-		<button id="btn-apply" class="button" type="button">{$MOD.LBL_APPLY_BUTTON}</button>
-		<button id="btn-delete" class="button" type="button">{$MOD.LBL_DELETE_BUTTON}</button>
 		<button id="btn-cancel" class="button" type="button">{$MOD.LBL_CANCEL_BUTTON}</button>
+		<button id="btn-delete" class="button" type="button">{$MOD.LBL_DELETE_BUTTON}</button>
 		<button id="btn-send-invites" class="button" type="button">{$MOD.LBL_SEND_INVITES}</button>
+		<button id="btn-full-form" class="button" type="button">{$APP.LBL_FULL_FORM_BUTTON_LABEL}</button>
 	</div>
 </div>
 
@@ -267,13 +270,12 @@
 {include file=$settings}
 {/if}
 	
-<script type="text/javascript">	        	
+<script type="text/javascript">	
 {$GRjavascript}
 </script>
 	
 <script type="text/javascript">	
 {literal}
-
 YAHOO.util.Event.onDOMReady(function(){	
 	var schedulerLoader = new YAHOO.util.YUILoader({
 		require : ["jsclass_scheduler"],
@@ -297,7 +299,6 @@ YAHOO.util.Event.onDOMReady(function(){
 	
 <script type="text/javascript" src="include/javascript/jsclass_base.js"></script>
 <script type="text/javascript" src="include/javascript/jsclass_async.js"></script>	
-<script type="text/javascript" src="include/javascript/overlibmws.js"></script>
 	
 <style type="text/css">
 {literal}
@@ -312,10 +313,12 @@ YAHOO.util.Event.onDOMReady(function(){
 {if $view == 'day'}
 <style type="text/css">
 {literal}
-	.day_col, .left_time_col{
+	#cal-grid div.col, #cal-grid div.left_col{
 		border-top: 1px solid silver;	
 	}
 {/literal}
 </style>
 {/if}
+
+<div id="cal-width-helper" style="width: auto;"></div>
 

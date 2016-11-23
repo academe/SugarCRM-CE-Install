@@ -47,14 +47,15 @@ class CalendarViewSaveSettings extends SugarView {
 	}
 	
 	function display(){
-		global $current_user;		
-
+		global $current_user;
+		
 		$db_start = $this->to_db_time($_REQUEST['day_start_hours'],$_REQUEST['day_start_minutes'],$_REQUEST['day_start_meridiem']);
 		$db_end = $this->to_db_time($_REQUEST['day_end_hours'],$_REQUEST['day_end_minutes'],$_REQUEST['day_end_meridiem']);
 		
 		$current_user->setPreference('day_start_time', $db_start, 0, 'global', $current_user);
 		$current_user->setPreference('day_end_time', $db_end, 0, 'global', $current_user);
-		
+
+		$current_user->setPreference('calendar_display_timeslots', $_REQUEST['display_timeslots'], 0, 'global', $current_user);
 		$current_user->setPreference('show_tasks', $_REQUEST['show_tasks'], 0, 'global', $current_user);
 		$current_user->setPreference('show_calls', $_REQUEST['show_calls'], 0, 'global', $current_user);
 
@@ -81,7 +82,7 @@ class CalendarViewSaveSettings extends SugarView {
 		if($minutes < 10)
 			$minutes = "0".$minutes;	
 		return $hours . ":". $minutes; 
-	}	
+	}
 	
 
 }
