@@ -1,7 +1,7 @@
 <?php
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -58,6 +58,7 @@ class CalendarViewSaveSettings extends SugarView {
 		$current_user->setPreference('calendar_display_timeslots', $_REQUEST['display_timeslots'], 0, 'global', $current_user);
 		$current_user->setPreference('show_tasks', $_REQUEST['show_tasks'], 0, 'global', $current_user);
 		$current_user->setPreference('show_calls', $_REQUEST['show_calls'], 0, 'global', $current_user);
+		$current_user->setPreference('show_completed', $_REQUEST['show_completed'], 0, 'global', $current_user);
 
 		if(isset($_REQUEST['day']) && !empty($_REQUEST['day']))
 			header("Location: index.php?module=Calendar&action=index&view=".$_REQUEST['view']."&hour=0&day=".$_REQUEST['day']."&month=".$_REQUEST['month']."&year=".$_REQUEST['year']);

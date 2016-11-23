@@ -1,6 +1,6 @@
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -280,13 +280,23 @@
 		
 		
 		if(params.type == "advanced"){
-		var elContent = document.createElement("div");
+			var elContent = document.createElement("div");
 			elContent.setAttribute("class","content");
 			if(params.content_style != "") {
 				elContent.style[params.content_style] = params.content_style_value;
 			}
 			elContent.innerHTML = params.item_text;
 			el.appendChild(elContent);
+
+			var related_to = document.createElement("div");
+			related_to.setAttribute("class","content");
+			if(params.content_style != "") {
+			    related_to.style[params.content_style] = params.content_style_value;
+			}
+			if (params.related_to){
+			    related_to.innerHTML = params.related_to;
+			}
+			el.appendChild(related_to);
 		}
 		
 
@@ -556,10 +566,18 @@
 				
 				var duration_coef = duration / CAL.t_step;
 				el.setAttribute("duration_coef",duration_coef);				
-				if(duration_coef < 1.75)
+				if(duration_coef < 1.75){
 					el.childNodes[1].style.display = "none";
-				else
+					if (el.childNodes[2]){
+					    el.childNodes[2].style.display = "none";
+					}
+				}
+				else {
 					el.childNodes[1].style.display = "";
+					if (el.childNodes[2]){
+					    el.childNodes[2].style.display = "";
+					}
+				}
 
 				var callback = {
 					success: function(o){
@@ -791,7 +809,7 @@
 				return;
 			}
 				
-			var head_text = CAL.get_header_text(item.type,item.time_start,item.name,item.record);					
+			var head_text = CAL.get_header_text(item.type,item.time_start,item.name,item.record);
 			var time_cell = item.timestamp - item.timestamp % (CAL.t_step * 60);			
 			var duration_coef; 
 			if(item.module_name == 'Tasks'){
@@ -804,6 +822,7 @@
 			}
 
 			var item_text = SUGAR.language.languages.app_list_strings[item.type +'_status_dom'][item.status];
+			var related_to = item.related_to;
 			
 			var content_style = "";
 			var content_style_value = "";
@@ -823,7 +842,8 @@
 				id_suffix: id_suffix,
 				item_text: item_text,
 				content_style: content_style,
-				content_style_value: content_style_value
+				content_style_value: content_style_value,
+				related_to: related_to
 			});
 			
 			YAHOO.util.Event.on(el,"click",function(){
@@ -844,12 +864,24 @@
 
 				CAL.cut_record(item.record + id_suffix);				
 				//CAL.arrange_slot("t_" + time_cell + suffix);
+
+				// Bug59353 - fix of appointment overlaps to another user on shared Calendar
+				if (CAL.view == "shared"){
+				    var end_time = $("#"+slot.id).parents("div:first").children("div:last").attr("time");
+				    var end_time_id = $("#"+slot.id).parents("div:first").children("div:last").attr("id");
+				    if (end_time && end_time_id){
+				        var end_timestamp = parseInt(end_time_id.match(/t_([0-9]+)_.*/)[1]) + 1800;
+				        var share_coef = (end_timestamp - parseInt(item.timestamp)) / 1800;
+				        if (share_coef < duration_coef)
+				            el.style.height = parseInt((CAL.slot_height + 1) * share_coef - 1) + "px";
+				    }
+				}
 			}
 				
 	}
 
 	CAL.get_header_text = function (type,time_start,text,record){
-			var start_text = "<span class='start_time'>" + time_start + "</span> " + text;
+			var start_text = text;
 			return start_text;
 	}
 	

@@ -2,7 +2,7 @@
 if (!defined('sugarEntry')) define('sugarEntry', true);
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -170,7 +170,7 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
      * @return Array records that match search criteria
      */
     function get_modified_relationships($session, $module_name, $related_module, $from_date, $to_date, $offset, $max_results, $deleted=0, $module_user_id = '', $select_fields = array(), $relationship_name = '', $deletion_date = ''){
-        global  $beanList, $beanFiles;
+        global  $beanList, $beanFiles, $current_user;
         $error = new SoapError();
         $output_list = array();
 
@@ -217,9 +217,9 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
             $query .= " OR ({0}.date_modified > " . db_convert("'".$GLOBALS['db']->quote($deletion_date)."'", 'datetime'). " AND {0}.date_modified <= ". db_convert("'".$GLOBALS['db']->quote($to_date)."'", 'datetime')." AND {0}.deleted = 1)";
         }
 
-        if(!empty($module_user_id))
+        if(!empty($current_user->id))
         {
-            $query .= " AND m2.id = '".$GLOBALS['db']->quote($module_user_id)."'";
+            $query .= " AND m2.id = '".$GLOBALS['db']->quote($current_user->id)."'";
         }
 
         //if($related_module == 'Meetings' || $related_module == 'Calls' || $related_module = 'Contacts'){

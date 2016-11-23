@@ -1,6 +1,6 @@
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -302,9 +302,6 @@ SUGAR.ajaxUI = {
     },
     firstLoad : function()
     {
-    	// WebKit menu hack, to be used in theme style.js when setting superfish
-        SUGAR.ajaxUI.menuFix = true;
-        
         //Setup Browser History
         var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
         var aRegex = /action=([^&#]*)/.exec(window.location);

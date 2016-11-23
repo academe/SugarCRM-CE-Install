@@ -2,7 +2,7 @@
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -62,16 +62,19 @@ class CalendarUtils {
 				'duration_hours',
 				'duration_minutes',
 				'status',
+				'related_to',
 			),
 			'Calls' => array(
 				'name',
 				'duration_hours',
 				'duration_minutes',
 				'status',
+				'related_to',
 			),
 			'Tasks' => array(
 				'name',
 				'status',
+				'related_to',
 			),
 		);
 	}
@@ -132,7 +135,15 @@ class CalendarUtils {
 			$field_list = CalendarUtils::get_fields();
 			$field_arr = array();
 			foreach($field_list[$bean->module_dir] as $field){
-				$field_arr[$field] = $bean->$field;
+			    if ($field == 'related_to')
+			    {
+			        $focus = BeanFactory::getBean($bean->parent_type, $bean->parent_id);
+			        $field_arr[$field] = $focus->name;
+			    }
+			    else
+			    {
+			        $field_arr[$field] = $bean->$field;
+			    }
 			}
 
 			$date_field = "date_start";

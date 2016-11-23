@@ -1,6 +1,6 @@
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -80,7 +80,7 @@ return true;}else{if(typeof(YAHOO.util.Selector.query("input[type=submit]",form)
 form.submit();return false;}},cleanGlobals:function()
 {sqs_objects={};QSProcessedFieldsArray={};collection={};if(SUGAR.EmailAddressWidget){SUGAR.EmailAddressWidget.instances={};SUGAR.EmailAddressWidget.count={};}
 YAHOO.util.Event.removeListener(window,'resize');if(typeof(dialog)!='undefined'&&typeof(dialog.destroy)=='function'){dialog.destroy();delete dialog;}},firstLoad:function()
-{SUGAR.ajaxUI.menuFix=true;var url=YAHOO.util.History.getBookmarkedState('ajaxUILoc');var aRegex=/action=([^&#]*)/.exec(window.location);var action=aRegex?aRegex[1]:false;var mRegex=/module=([^&#]*)/.exec(window.location);var module=mRegex?mRegex[1]:false;if(module!="ModuleBuilder")
+{var url=YAHOO.util.History.getBookmarkedState('ajaxUILoc');var aRegex=/action=([^&#]*)/.exec(window.location);var action=aRegex?aRegex[1]:false;var mRegex=/module=([^&#]*)/.exec(window.location);var module=mRegex?mRegex[1]:false;if(module!="ModuleBuilder")
 {var go=url!=null||action=="ajaxui";url=url?url:'index.php?module=Home&action=index';YAHOO.util.History.register('ajaxUILoc',url,SUGAR.ajaxUI.go);YAHOO.util.History.initialize("ajaxUI-history-field","ajaxUI-history-iframe");SUGAR.ajaxUI.hist_loaded=true;if(go)
 SUGAR.ajaxUI.go(url);}
 SUGAR_callsInProgress--;},print:function()

@@ -1,7 +1,7 @@
 {*
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -127,6 +127,17 @@ $(function() {
 						<select size="1" name="show_tasks" tabindex="102">
 							<option value='' {if !$show_tasks}selected{/if}>{$MOD.LBL_NO}</option>
 							<option value='true' {if $show_tasks}selected{/if}>{$MOD.LBL_YES}</option>								
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td scope="row" valign="top">
+						{$MOD.LBL_SETTINGS_COMPLETED_SHOW}
+					</td>
+					<td>	
+						<select size="1" name="show_completed" tabindex="102">
+							<option value='' {if !$show_completed}selected{/if}>{$MOD.LBL_NO}</option>
+							<option value='true' {if $show_completed}selected{/if}>{$MOD.LBL_YES}</option>								
 						</select>
 					</td>
 				</tr>

@@ -1,6 +1,6 @@
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -55,7 +55,9 @@ function insert_empty_items(el,count,to_end){var slot=el.parentNode;for(var i=0;
 CAL.arrange_advanced=function(){var nodes=CAL.query("#cal-grid #cal-scrollable .col");for(var i=0;i<nodes.length;i++){CAL.arrange_column(nodes[i]);}
 CAL.update_dd.fire();}
 CAL.create_item=function(params){var item=params.item;var id=params.id+params.id_suffix;var el=document.createElement("div");var elHead=document.createElement("div");elHead.setAttribute("class","head");var elHeadInfo=document.createElement("div");elHeadInfo.setAttribute("class","adicon");elHeadInfo.setAttribute("id","div_"+id);var params_click=new Object();params_click.id=id;YAHOO.util.Event.on(elHeadInfo,"click",function(e){YAHOO.util.Event.stopPropagation(e);CAL.show_additional_details(params_click.id);},params_click);var head_text=document.createElement("div");head_text.innerHTML=params.head_text;elHead.appendChild(elHeadInfo);elHead.appendChild(head_text);el.appendChild(elHead);if(params.type=="advanced"){var elContent=document.createElement("div");elContent.setAttribute("class","content");if(params.content_style!=""){elContent.style[params.content_style]=params.content_style_value;}
-elContent.innerHTML=params.item_text;el.appendChild(elContent);}
+elContent.innerHTML=params.item_text;el.appendChild(elContent);var related_to=document.createElement("div");related_to.setAttribute("class","content");if(params.content_style!=""){related_to.style[params.content_style]=params.content_style_value;}
+if(params.related_to){related_to.innerHTML=params.related_to;}
+el.appendChild(related_to);}
 el.setAttribute("id",id);el.className="act_item"+" "+item.type+"_item";el.style.backgroundColor=CAL.activity_colors[item.module_name]['body'];el.style.borderColor=CAL.activity_colors[item.module_name]['border'];el.setAttribute("record",params.id);el.setAttribute("module_name",item.module_name);el.setAttribute("record",item.record);el.setAttribute("status",item.status);el.setAttribute("detail",item.detail);el.setAttribute("edit",item.edit);if(typeof item.repeat_parent_id!="undefined"&&item.repeat_parent_id!="")
 el.setAttribute("repeat_parent_id",item.repeat_parent_id);if(params.type=="basic"){el.style.left="-1px";el.style.display="block";el.setAttribute("days",params.days);el.style.width=((params.days)*100)+"%";el.style.top=parseInt(params.position*CAL.slot_height-params.slot.childNodes.length*(CAL.slot_height+1))+"px";}else{el.style.height=parseInt((CAL.slot_height+1)*params.duration_coef-1)+"px";el.setAttribute("duration_coef",params.duration_coef);}
 YAHOO.util.Event.on(el,"mouseover",function(){if(!CAL.records_openable)
@@ -86,9 +88,9 @@ dd.onDragOut=function(e,id){var slot=document.getElementById(id);YAHOO.util.Dom.
 CAL.make_resizable=function(id,slot){var pos=0,e=slot;while(e=e.previousSibling){pos++;}
 var max_height=(CAL.cells_per_day-pos)*(CAL.slot_height+1)-1;var old_width;var resize=new YAHOO.util.Resize(id,{handles:['b'],maxHeight:max_height});CAL.resize_registry[id]=resize;resize.on('startResize',function(e){var el=CAL.get(id);if(el){el.style.zIndex=3;}
 CAL.records_openable=false;CAL.disable_creating=true;});resize.on('endResize',function(e){elm_id=id;var duration=e.height /(CAL.slot_height+1)*CAL.t_step;var remainder=duration%15;if(remainder>7.5)
-remainder=(-1)*(15-remainder);duration=duration-remainder;var duration_hours=parseInt(duration / 60);var duration_minutes=duration%60;var new_size=(duration / CAL.t_step)*(CAL.slot_height+1)-1;var el=CAL.get(elm_id);if(el){el.style.zIndex='';el.style.height=new_size+"px";CAL.arrange_slot(slot.id);var nodes=CAL.query("#cal-grid div.act_item");CAL.each(nodes,function(i,v){nodes[i].style.zIndex='';});var duration_coef=duration / CAL.t_step;el.setAttribute("duration_coef",duration_coef);if(duration_coef<1.75)
-el.childNodes[1].style.display="none";else
-el.childNodes[1].style.display="";var callback={success:function(o){try{res=eval("("+o.responseText+")");}catch(err){alert(CAL.lbl_error_saving);ajaxStatus.hideStatus();return;}
+remainder=(-1)*(15-remainder);duration=duration-remainder;var duration_hours=parseInt(duration / 60);var duration_minutes=duration%60;var new_size=(duration / CAL.t_step)*(CAL.slot_height+1)-1;var el=CAL.get(elm_id);if(el){el.style.zIndex='';el.style.height=new_size+"px";CAL.arrange_slot(slot.id);var nodes=CAL.query("#cal-grid div.act_item");CAL.each(nodes,function(i,v){nodes[i].style.zIndex='';});var duration_coef=duration / CAL.t_step;el.setAttribute("duration_coef",duration_coef);if(duration_coef<1.75){el.childNodes[1].style.display="none";if(el.childNodes[2]){el.childNodes[2].style.display="none";}}
+else{el.childNodes[1].style.display="";if(el.childNodes[2]){el.childNodes[2].style.display="";}}
+var callback={success:function(o){try{res=eval("("+o.responseText+")");}catch(err){alert(CAL.lbl_error_saving);ajaxStatus.hideStatus();return;}
 if(res.access=='yes'){CAL.update_vcal();CAL.clear_additional_details(el.getAttribute("record"));CAL.arrange_column(slot.parentNode);CAL.update_dd.fire();ajaxStatus.hideStatus();CAL.disable_creating=false;CAL.records_openable=true;}}};ajaxStatus.showStatus(SUGAR.language.get('app_strings','LBL_SAVING'));var url="index.php?module=Calendar&action=Resize&sugar_body_only=true";var data={"current_module":el.getAttribute("module_name"),"record":el.getAttribute("record"),"duration_hours":duration_hours,"duration_minutes":duration_minutes};YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));}});}
 CAL.destroy_ui=function(id){if(CAL.items_resizable&&typeof CAL.resize_registry[id]!="undefined"){CAL.resize_registry[id].destroy();delete CAL.resize_registry[id];}
 if(CAL.items_draggable&&typeof CAL.dd_registry[id]!="undefined")
@@ -123,13 +125,14 @@ CAL.basic.remove(item);if(CAL.style=="basic"||item.days>1){CAL.basic.add(item);r
 var head_text=CAL.get_header_text(item.type,item.time_start,item.name,item.record);var time_cell=item.timestamp-item.timestamp%(CAL.t_step*60);var duration_coef;if(item.module_name=='Tasks'){duration_coef=1;}else{if((item.duration_minutes<CAL.t_step)&&(item.duration_hours==0))
 duration_coef=1;else
 duration_coef=(parseInt(item.duration_hours)*60+parseInt(item.duration_minutes))/ CAL.t_step;}
-var item_text=SUGAR.language.languages.app_list_strings[item.type+'_status_dom'][item.status];var content_style="";var content_style_value="";if(duration_coef<1.75){content_style="display";content_style_value="none";}
-var elm_id=item.record+id_suffix;var el=CAL.create_item({item:item,type:'advanced',head_text:head_text,duration_coef:duration_coef,id:item.record,id_suffix:id_suffix,item_text:item_text,content_style:content_style,content_style_value:content_style_value});YAHOO.util.Event.on(el,"click",function(){if(this.getAttribute('detail')=="1")
+var item_text=SUGAR.language.languages.app_list_strings[item.type+'_status_dom'][item.status];var related_to=item.related_to;var content_style="";var content_style_value="";if(duration_coef<1.75){content_style="display";content_style_value="none";}
+var elm_id=item.record+id_suffix;var el=CAL.create_item({item:item,type:'advanced',head_text:head_text,duration_coef:duration_coef,id:item.record,id_suffix:id_suffix,item_text:item_text,content_style:content_style,content_style_value:content_style_value,related_to:related_to});YAHOO.util.Event.on(el,"click",function(){if(this.getAttribute('detail')=="1")
 CAL.load_form(this.getAttribute('module_name'),this.getAttribute('record'),false);});var slot;if(slot=CAL.get("t_"+time_cell+suffix)){slot.appendChild(el);if(item.edit==1){if(CAL.items_draggable)
 CAL.make_draggable(elm_id,"advanced");if(item.module_name!="Tasks"&&CAL.items_resizable)
 CAL.make_resizable(elm_id,slot);}
-CAL.cut_record(item.record+id_suffix);}}
-CAL.get_header_text=function(type,time_start,text,record){var start_text="<span class='start_time'>"+time_start+"</span> "+text;return start_text;}
+CAL.cut_record(item.record+id_suffix);if(CAL.view=="shared"){var end_time=$("#"+slot.id).parents("div:first").children("div:last").attr("time");var end_time_id=$("#"+slot.id).parents("div:first").children("div:last").attr("id");if(end_time&&end_time_id){var end_timestamp=parseInt(end_time_id.match(/t_([0-9]+)_.*/)[1])+1800;var share_coef=(end_timestamp-parseInt(item.timestamp))/ 1800;if(share_coef<duration_coef)
+el.style.height=parseInt((CAL.slot_height+1)*share_coef-1)+"px";}}}}
+CAL.get_header_text=function(type,time_start,text,record){var start_text=text;return start_text;}
 CAL.cut_record=function(id){var el=CAL.get(id);if(!el)
 return;var duration_coef=el.getAttribute("duration_coef");real_celcount=CAL.cells_per_day;var celpos=0;var s=el.parentNode;while(s.previousSibling){celpos++;s=s.previousSibling;}
 celpos=celpos+1;if(real_celcount-celpos-duration_coef<0)

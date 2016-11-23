@@ -1,7 +1,7 @@
 {*
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -126,7 +126,7 @@ var formatSelect = function(el, rec, col, data)
     var selected = false;
     if (row.select) selected = row.select;
     var ret = "<input type='checkbox' name='" + rec.getData().module + "-" + col.field + "'";
-    if(typeof(relationships[row.module]) == "undefined" || row.module == "Contacts")
+    if(typeof(relationships[row.module]) == "undefined")
     	ret += " disabled />";
     else {
         ret += "onclick='ModuleBuilder.convertLayoutGrid.getRecord(this).setData(\"select\", this.checked ? \""

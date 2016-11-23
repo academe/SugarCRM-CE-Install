@@ -2,7 +2,7 @@
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -286,6 +286,7 @@ class CalendarDisplay {
 		$ss->assign('display_timeslots', $displayTimeslots);
 		$ss->assign('show_calls',$this->cal->show_calls);
 		$ss->assign('show_tasks',$this->cal->show_tasks);
+		$ss->assign('show_completed', $this->cal->show_completed);
 		$ss->assign('TIME_START_HOUR_OPTIONS',$TIME_START_HOUR_OPTIONS);
 		$ss->assign('TIME_START_MINUTES_OPTIONS',$TIME_START_MINUTES_OPTIONS);
 		$ss->assign('TIME_START_MERIDIEM',$TIME_START_MERIDIEM);
