@@ -2,7 +2,7 @@
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2011 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -42,6 +42,7 @@ if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authe
 	die("Not a Valid Entry Point");
 }
 else {
+    $file_type=''; // bug 45896
     ini_set('zlib.output_compression','Off');//bug 27089, if use gzip here, the Content-Length in hearder may be incorrect.
     // cn: bug 8753: current_user's preferred export charset not being honored
     $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
@@ -103,8 +104,15 @@ else {
 
     } // if
 
-	$local_location = (isset($_REQUEST['isTempFile'])) ? "{$GLOBALS['sugar_config']['cache_dir']}/modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}"
-		 : $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
+    $local_location = $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
+    if (isset($_REQUEST['isTempFile']))
+    {
+        $local_location = $GLOBALS['sugar_config']['cache_dir'].'/modules/Emails/';
+        if (isset($_REQUEST['ieId'])) {
+            $local_location .= $_REQUEST['ieId'].'/';
+        }
+        $local_location .= 'attachments/'.$_REQUEST['id'];
+    }
 
 	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
 	    $local_location =  $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
@@ -149,7 +157,11 @@ else {
 		}
 		else if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
 			$download_location = $local_location;
-			$name = $_REQUEST['tempName'];
+            $name = '';
+            if (isset($_REQUEST['tempName']))
+            {
+                $name = $_REQUEST['tempName'];
+            }
 		}
 
 		if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/MSIE/", $_SERVER['HTTP_USER_AGENT']))
@@ -168,7 +180,8 @@ else {
 		        header("Content-Type: image/png");
 		    }
 		} else {
-		    header("Content-Type: application/force-download");
+            header("Content-Type: application/force-download");
+            header("Content-type: application/octet-stream");
             header("Content-Disposition: attachment; filename=\"".$name."\";");
 		}
 		// disable content type sniffing in MSIE

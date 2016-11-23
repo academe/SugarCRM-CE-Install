@@ -2,7 +2,7 @@
  if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2011 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -38,10 +38,10 @@
 
 
 
-$sugar_version      = '6.2.0';
-$sugar_db_version   = '6.2.0';
+$sugar_version      = '6.2.5';
+$sugar_db_version   = '6.2.5';
 $sugar_flavor       = 'CE';
-$sugar_build		= '6354';
-$sugar_timestamp    = '2011-05-31 03:07pm';
+$sugar_build		= '6747';
+$sugar_timestamp    = '2012-02-15 11:49am';
 
 ?>

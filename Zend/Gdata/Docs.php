@@ -57,7 +57,7 @@ require_once 'Zend/Gdata/Docs/DocumentListEntry.php';
 class Zend_Gdata_Docs extends Zend_Gdata
 {
 
-    const DOCUMENTS_LIST_FEED_URI = 'http://docs.google.com/feeds/default/private/full';
+    const DOCUMENTS_LIST_FEED_URI = 'https://docs.google.com/feeds/default/private/full';
     const AUTH_SERVICE_NAME = 'writely';
     const DEFAULT_MAJOR_PROTOCOL_VERSION = 3;
 
@@ -174,7 +174,7 @@ class Zend_Gdata_Docs extends Zend_Gdata
          * @return Zend_Gdata_Docs_DocumentListEntry
          */
         public function getResource($resourceId) {
-                $uri = 'http://docs.google.com/feeds/documents/private/full/' . $resourceId;
+                $uri = 'https://docs.google.com/feeds/documents/private/full/' . $resourceId;
                 return $this->getDocumentListEntry($uri);
     }
 
@@ -191,7 +191,7 @@ class Zend_Gdata_Docs extends Zend_Gdata
      * @deprecated Use getResource($resourceId) instead.
      */
     public function getDoc($docId, $docType) {
-        $location = 'http://docs.google.com/feeds/documents/private/full/' .
+        $location = 'https://docs.google.com/feeds/documents/private/full/' .
             $docType . '%3A' . $docId;
         return $this->getDocumentListEntry($location);
     }

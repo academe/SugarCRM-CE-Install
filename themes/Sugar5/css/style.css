@@ -1,6 +1,6 @@
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2011 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -1195,6 +1195,7 @@ div.indent_right {
     padding-top: 10px;
     text-align: center;
     padding-bottom: 5px;
+    clear: both;
 }
 
 #themePicker, #langPicker 
@@ -1563,8 +1564,8 @@ table.reportlistView{
     padding: 4px 5px 4px 5px;
     border-left: none;
     border-right: none;
-    border-top: 1px solid Blackccc;
-    border-bottom: 1px solid Blackccc;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
     background:Gainsboro;
 }
 

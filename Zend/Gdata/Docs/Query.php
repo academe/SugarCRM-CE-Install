@@ -51,7 +51,7 @@ class Zend_Gdata_Docs_Query extends Zend_Gdata_Query
      *
      * @var string
      */
-    const DOCUMENTS_LIST_FEED_URI = 'http://docs.google.com/feeds/default';
+    const DOCUMENTS_LIST_FEED_URI = 'https://docs.google.com/feeds/default';
 
     /**
      * The generic base URL used by some inherited methods

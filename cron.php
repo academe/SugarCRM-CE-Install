@@ -2,7 +2,7 @@
  if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2011 SugarCRM Inc.
+ * SugarCRM, Inc. Copyright (C) 2004-2012 SugarCRM Inc.
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -93,7 +93,9 @@ if(!is_file($cachePath.'/'.$pid)) {
 ///////////////////////////////////////////////////////////////////////////////
 ////	EXECUTE IF VALID TIME (NOT DDOS)
 
-if($timestamp[0] < strtotime(date('H:i'))) {
+// mjamil | bug # 45229 - schedulers not able to run due to current time being equal to
+// $timestamp[0]
+if($timestamp[0] <= strtotime(date('H:i'))) {
 	if(is_writable($cachePath.'/'.$pid)) {
 		write_array_to_file('timestamp', array(strtotime(date('H:i'))) , $cachePath.'/'.$pid);
 		require('modules/Schedulers/Scheduler.php');
