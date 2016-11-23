@@ -105,7 +105,7 @@ else {
     } // if
 
     $local_location = $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
-    if (isset($_REQUEST['isTempFile']))
+    if (isset($_REQUEST['isTempFile']) && (empty($_REQUEST['type']) || $_REQUEST['type'] != 'web2lead'))
     {
         $local_location = $GLOBALS['sugar_config']['cache_dir'].'/modules/Emails/';
         if (isset($_REQUEST['ieId'])) {

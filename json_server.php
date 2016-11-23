@@ -259,16 +259,16 @@ function construct_where(&$query_obj, $table='',$module=null) {
 		}
 		else {
 			if($condition['op'] == 'contains') {
-				$cond_arr[] = $GLOBALS['db']->quote($table.$condition['name'])." like '%".$GLOBALS['db']->quote($condition['value'])."%'";
+				$cond_arr[] = $table.getValidDBName($condition['name'])." like '%".$GLOBALS['db']->quote($condition['value'])."%'";
 			}
 			if($condition['op'] == 'like_custom') {
 				$like = '';
 				if(!empty($condition['begin'])) $like .= $GLOBALS['db']->quote($condition['begin']);
 				$like .= $GLOBALS['db']->quote($condition['value']);
 				if(!empty($condition['end'])) $like .= $GLOBALS['db']->quote($condition['end']);
-				$cond_arr[] = $GLOBALS['db']->quote($table.$condition['name'])." like '$like'";
+				$cond_arr[] = $table.getValidDBName($condition['name'])." like '$like'";
 			} else { // starts_with
-				$cond_arr[] = $GLOBALS['db']->quote($table.$condition['name'])." like '".$GLOBALS['db']->quote($condition['value'])."%'";
+				$cond_arr[] = $table.getValidDBName($condition['name'])." like '".$GLOBALS['db']->quote($condition['value'])."%'";
 			}
 		}
 	}
