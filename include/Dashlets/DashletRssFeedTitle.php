@@ -70,6 +70,9 @@ class DashletRssFeedTitle {
 	 */
 	public function readFeed() {
 		if ($this->url) {
+                    if (!in_array(strtolower(parse_url($this->url, PHP_URL_SCHEME)), array("http", "https"), true)) {
+                        return false;
+                    }
 			$fileOpen = @fopen($this->url, 'r');
 			if ($fileOpen) {
 				$this->fileOpen = true;

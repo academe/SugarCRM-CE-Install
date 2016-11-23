@@ -60,6 +60,10 @@ class ViewShowDuplicates extends SugarView
         }
 
         parse_str($_SESSION['SHOW_DUPLICATES'],$_POST);
+        $post = array_map("securexss", $_POST);
+        foreach ($post as $k => $v) {
+            $_POST[$k] = $v;
+        }
         unset($_SESSION['SHOW_DUPLICATES']);
 
 
