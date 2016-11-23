@@ -521,46 +521,58 @@ class RenameModules
      */
     private function renameModuleRelatedLinks($moduleName, $moduleClass)
     {
+        global $app_strings;
         $GLOBALS['log']->info("Begining to renameModuleRelatedLinks for $moduleClass\n");
-        $tmp = new $moduleClass;
-        if( ! method_exists($tmp, 'get_related_fields') )
-        {
-            $GLOBALS['log']->info("Unable to resolve linked fields for module $moduleClass ");
+        $bean = BeanFactory::getBean($moduleName);
+        if (!$bean instanceof SugarBean){
+            $GLOBALS['log']->info("Unable to get linked fields for module $moduleClass\n");
             return;
         }
 
-        $linkedFields = $tmp->get_related_fields();
-        $mod_strings = return_module_language($this->selectedLanguage, $moduleName);
+        $arrayToRename = array();
         $replacementStrings = array();
+        $mod_strings = return_module_language($this->selectedLanguage, $moduleName);
+        $changedModules = array_keys($this->changedModules);
 
-        foreach($linkedFields as $link => $linkEntry)
+        $relatedFields = $bean->get_related_fields();
+        foreach($relatedFields as $field => $defs)
         {
-            //For each linked field check if the module referenced to is in our changed module list.
-            foreach($this->changedModules as $changedModuleName => $renameFields)
-            {
-                if( isset($linkEntry['module']) && $linkEntry['module'] ==  $changedModuleName)
-                {
-                    $GLOBALS['log']->debug("Begining to rename for link field {$link}");
-                    if( !isset($mod_strings[$linkEntry['vname']]) )
-                    {
-                        $GLOBALS['log']->debug("No label attribute for link $link, continuing.");
-                        continue;
-                    }
-
-                    $replaceKey = $linkEntry['vname'];
-                    $oldStringValue = $mod_strings[$replaceKey];
-                   // Use the plural value of the two only if it's longer and the old language string contains it,
-                   // singular otherwise
-                    if (strlen($renameFields['prev_plural']) > strlen($renameFields['prev_singular']) && strpos($oldStringValue, $renameFields['prev_plural']) !== false) {
-                        $key = 'plural';
-                    } else {
-                       $key = 'singular';
-
-                    }
-                    $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_' . $key], ENT_QUOTES), $renameFields[$key], $oldStringValue);
-                    $replacementStrings[$replaceKey] = $replacedString;
+            if (isset($defs['module']) && in_array($defs['module'], $changedModules)){
+                $arrayToRename[$field] = $defs;
+            }
+        }
+        $linkedFields = $bean->get_linked_fields();
+        foreach($linkedFields as $field => $defs)
+        {
+            if ($bean->load_relationship($defs['name'])){
+                $relModule = $bean->$defs['name']->getRelatedModuleName();
+                if (in_array($relModule, $changedModules)) {
+                    $defs['module'] = $relModule;
+                    $arrayToRename[$field] = $defs;
                 }
             }
+        }
+
+        foreach($arrayToRename as $link => $linkEntry)
+        {
+            $GLOBALS['log']->debug("Begining to rename for link field {$link}");
+            if( !isset($linkEntry['vname'])
+                || (!isset($mod_strings[$linkEntry['vname']]) && !isset($app_strings[$linkEntry['vname']]))) {
+                $GLOBALS['log']->debug("No label attribute for link $link, continuing.");
+                continue;
+            }
+
+            $replaceKey = $linkEntry['vname'];
+            $oldStringValue = translate($replaceKey, $moduleName);
+            $renameFields = $this->changedModules[$linkEntry['module']];
+
+            if (strlen($renameFields['prev_plural']) > strlen($renameFields['prev_singular']) && strpos($oldStringValue, $renameFields['prev_plural']) !== false) {
+                $key = 'plural';
+            } else {
+                $key = 'singular';
+            }
+            $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_' . $key], ENT_QUOTES), $renameFields[$key], $oldStringValue);
+            $replacementStrings[$replaceKey] = $replacedString;
         }
 
         //Now we can write out the replaced language strings for each module

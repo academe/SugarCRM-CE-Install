@@ -136,7 +136,7 @@ class ImportViewDupcheck extends ImportView
              $ik_field = explode('::', $ik);
 
              //field is not a custom field and was not included in the key, or was not in mapped fields, so skip
-             if(strpos($ik_field[0],'ustomfield::')>0 && (empty($ik_field[1]) || !in_array($ik_field[1], $mapped_fields))){
+             if(strpos($ik_field[0],'ustomfield::')>0 || (empty($ik_field[1]) || !in_array($ik_field[1], $mapped_fields))){
              //skip indexed fields that are not defined in user mapping or
                 continue;
              }

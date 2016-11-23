@@ -367,6 +367,7 @@ class quicksearchQuery
             }
         }
 
+
         return $data;
     }
 

@@ -256,7 +256,7 @@ class Zend_Oauth_Provider
 	    if(empty($_SERVER['SERVER_PORT']) || empty($_SERVER['HTTP_HOST']) || empty($_SERVER['REQUEST_URI'])) {
 	        return Zend_Uri_Http::fromString("http://localhost/");
 	    }
-	    if($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) &&  $_SERVER['HTTPS'] == 'on') || (!empty($_SERVER['HTTP_HTTPS']) &&  $_SERVER['HTTP_HTTPS'] == 'on')) {
+	    if($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) &&  $_SERVER['HTTPS'] == 'on') || (!empty($_SERVER['HTTP_HTTPS']) &&  $_SERVER['HTTP_HTTPS'] == 'on') || (!empty($_SERVER['HTTP_X_FORWARDED_PORT']) && $_SERVER['HTTP_X_FORWARDED_PORT'] == 443)) {
 	        $proto = 'https';
 	    }
 	    return Zend_Uri_Http::fromString("$proto://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");

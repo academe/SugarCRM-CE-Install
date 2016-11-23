@@ -80,6 +80,6 @@ if(hide_td!=null)
 if(remove_td!=null)
 {var remove_ref=remove_td.getElementsByTagName('select')[0];for(i=0;i<remove_ref.options.length;i++)
 {remove_tabs_def+="remove_tabs[]="+remove_ref.options[i].value+"&";}}
-document.EditView.display_tabs_def.value=display_tabs_def;document.EditView.hide_tabs_def.value=hide_tabs_def;document.EditView.remove_tabs_def.value=remove_tabs_def;Set_Cookie('sugar_theme_menu_load','true',30,'/','','');}
+document.EditView.display_tabs_def.value=display_tabs_def;document.EditView.hide_tabs_def.value=hide_tabs_def;document.EditView.remove_tabs_def.value=remove_tabs_def;}
 function add_checks(f){return true;}
 function onUserEditView(){YAHOO.util.Event.onContentReady('user_theme_picker',function(){document.getElementById('user_theme_picker').onchange=function(){document.getElementById('themePreview').src="index.php?entryPoint=getImage&themeName="+document.getElementById('user_theme_picker').value+"&imageName=themePreview.png";if(typeof themeGroupList[document.getElementById('user_theme_picker').value]!='undefined'&&themeGroupList[document.getElementById('user_theme_picker').value]){document.getElementById('use_group_tabs_row').style.display='';}else{document.getElementById('use_group_tabs_row').style.display='none';}}});setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);setSigDigits();user_status_display(document.getElementById('UserType'));}
